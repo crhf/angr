@@ -1,5 +1,5 @@
 import sys
-import nose.tools
+import unittest
 
 from angr import SimState, SimFile, SIM_PROCEDURES
 
@@ -22,7 +22,7 @@ def test_pwrite():
     simfd.read(res, 13)
     data = state.solver.eval(state.mem[res].string.resolved, cast_to=bytes)
 
-    nose.tools.assert_true(data == b'hello test!!\n')
+    unittest.TestCase().assertTrue(data == b'hello test!!\n')
 
     state.posix.close(fd)
 
@@ -43,8 +43,8 @@ def test_pread():
     data1 = state.solver.eval(state.mem[buf1_addr].string.resolved, cast_to=bytes)
     data2 = state.solver.eval(state.mem[buf2_addr].string.resolved, cast_to=bytes)
 
-    nose.tools.assert_true(data1 == b'world!')
-    nose.tools.assert_true(data2 == b'hello')
+    unittest.TestCase().assertTrue(data1 == b'world!')
+    unittest.TestCase().assertTrue(data2 == b'hello')
 
     state.posix.close(fd)
 

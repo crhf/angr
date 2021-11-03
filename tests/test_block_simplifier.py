@@ -1,7 +1,7 @@
 
 import logging
 import os
-import nose
+import unittest
 from itertools import count
 
 import archinfo
@@ -38,8 +38,8 @@ def test_simplify_pointless_assign():
     )
 
     b = block_simplify(block)
-    nose.tools.assert_equal(len(b.statements), 1)
-    nose.tools.assert_equal(b.statements[0].idx, 3)
+    unittest.TestCase().assertEqual(len(b.statements), 1)
+    unittest.TestCase().assertEqual(b.statements[0].idx, 3)
 
 
 def test_simplify_dead_assign_0():
@@ -69,8 +69,8 @@ def test_simplify_dead_assign_0():
     )
 
     b = block_simplify(block)
-    nose.tools.assert_equal(len(b.statements), 2)
-    nose.tools.assert_equal(b.statements[0].idx, important)
+    unittest.TestCase().assertEqual(len(b.statements), 2)
+    unittest.TestCase().assertEqual(b.statements[0].idx, important)
 
 
 def test_simplify_dead_assign_1():
@@ -97,9 +97,9 @@ def test_simplify_dead_assign_1():
     )
 
     b = block_simplify(block)
-    nose.tools.assert_equal(len(b.statements), 2)
-    nose.tools.assert_equal(b.statements[0].idx, 1)
-    nose.tools.assert_equal(b.statements[1].idx, important)
+    unittest.TestCase().assertEqual(len(b.statements), 2)
+    unittest.TestCase().assertEqual(b.statements[0].idx, 1)
+    unittest.TestCase().assertEqual(b.statements[1].idx, important)
 
 
 if __name__ == '__main__':

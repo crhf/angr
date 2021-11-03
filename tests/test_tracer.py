@@ -2,7 +2,7 @@ import os
 import sys
 import logging
 
-import nose
+import unittest
 import angr
 
 from common import bin_location, do_trace, load_cgc_pov, slow_test
@@ -25,15 +25,15 @@ def tracer_cgc(filename, test_name, stdin, copy_states=False, follow_unsat=False
 
 
 def trace_cgc_with_pov_file(binary: str, test_name: str, pov_file: str, output_initial_bytes: bytes, copy_states=False):
-    nose.tools.assert_true(os.path.isfile(pov_file))
+    unittest.TestCase().assertTrue(os.path.isfile(pov_file))
     pov = load_cgc_pov(pov_file)
     trace_result = tracer_cgc(binary, test_name, b''.join(pov.writes), copy_states)
     simgr = trace_result[0]
     simgr.run()
-    nose.tools.assert_true("traced" in simgr.stashes)
-    nose.tools.assert_equal(len(simgr.traced), 1)
+    unittest.TestCase().assertTrue("traced" in simgr.stashes)
+    unittest.TestCase().assertEqual(len(simgr.traced), 1)
     stdout_dump = simgr.traced[0].posix.dumps(1)
-    nose.tools.assert_true(stdout_dump.startswith(output_initial_bytes))
+    unittest.TestCase().assertTrue(stdout_dump.startswith(output_initial_bytes))
 
 
 def tracer_linux(filename, test_name, stdin, add_options=None, remove_options=None):
@@ -57,8 +57,8 @@ def test_recursion():
     simgr, _ = tracer_cgc(fname, 'tracer_recursion', blob)
     simgr.run()
 
-    nose.tools.assert_true(simgr.crashed)
-    nose.tools.assert_true(simgr.crashed[0].solver.symbolic(simgr.crashed[0].regs.ip))
+    unittest.TestCase().assertTrue(simgr.crashed)
+    unittest.TestCase().assertTrue(simgr.crashed[0].solver.symbolic(simgr.crashed[0].regs.ip))
 
 
 @slow_test
@@ -73,8 +73,8 @@ def broken_cache_stall():
     crash_path = tracer.predecessors[-1]
     crash_state = simgr.crashed[0]
 
-    nose.tools.assert_not_equal(crash_path, None)
-    nose.tools.assert_not_equal(crash_state, None)
+    unittest.TestCase().assertNotEqual(crash_path, None)
+    unittest.TestCase().assertNotEqual(crash_state, None)
 
     # load it again
     simgr, tracer = tracer_cgc(b, 'tracer_cache_stall', blob)
@@ -83,14 +83,14 @@ def broken_cache_stall():
     crash_path = tracer.predecessors[-1]
     crash_state = simgr.one_crashed
 
-    nose.tools.assert_not_equal(crash_path, None)
-    nose.tools.assert_not_equal(crash_state, None)
+    unittest.TestCase().assertNotEqual(crash_path, None)
+    unittest.TestCase().assertNotEqual(crash_state, None)
 
 
 def test_manual_recursion():
 
     if not sys.platform.startswith('linux'):
-        raise nose.SkipTest()
+        unittest.TestCase().skipTest()
 
     b = os.path.join(bin_location, "tests", "cgc", "CROMU_00071")
     blob = open(os.path.join(bin_location, 'tests_data', 'crash2731'), 'rb').read()
@@ -101,8 +101,8 @@ def test_manual_recursion():
     crash_path = tracer.predecessors[-1]
     crash_state = simgr.one_crashed
 
-    nose.tools.assert_not_equal(crash_path, None)
-    nose.tools.assert_not_equal(crash_state, None)
+    unittest.TestCase().assertNotEqual(crash_path, None)
+    unittest.TestCase().assertNotEqual(crash_state, None)
 
 
 def test_cgc_se1_palindrome_raw():
@@ -113,26 +113,26 @@ def test_cgc_se1_palindrome_raw():
     simgr.run()
 
     # make sure the heap base is correct and hasn't been altered from the default
-    nose.tools.assert_true('traced' in simgr.stashes)
-    nose.tools.assert_equal(simgr.traced[0].cgc.allocation_base, 0xb8000000)
+    unittest.TestCase().assertTrue('traced' in simgr.stashes)
+    unittest.TestCase().assertEqual(simgr.traced[0].cgc.allocation_base, 0xb8000000)
 
     # make sure there is no crash state
-    nose.tools.assert_false(simgr.crashed)
+    unittest.TestCase().assertFalse(simgr.crashed)
 
     # make sure angr modeled the correct output
     stdout_dump = simgr.traced[0].posix.dumps(1)
-    nose.tools.assert_true(stdout_dump.startswith(b"\nWelcome to Palindrome Finder\n\n"
+    unittest.TestCase().assertTrue(stdout_dump.startswith(b"\nWelcome to Palindrome Finder\n\n"
                                                   b"\tPlease enter a possible palindrome: "
                                                   b"\t\tYes, that's a palindrome!\n\n"
                                                   b"\tPlease enter a possible palindrome: "))
     # make sure there were no 'Nope's from non-palindromes
-    nose.tools.assert_false(b"Nope" in stdout_dump)
+    unittest.TestCase().assertFalse(b"Nope" in stdout_dump)
 
     # now test crashing input
     simgr, _ = tracer_cgc(b, 'tracer_cgc_se1_palindrome_raw_yescrash', b'A'*129)
     simgr.run()
 
-    nose.tools.assert_true(simgr.crashed)
+    unittest.TestCase().assertTrue(simgr.crashed)
 
 
 def test_symbolic_sized_receives():
@@ -141,14 +141,14 @@ def test_symbolic_sized_receives():
     simgr, _ = tracer_cgc(b, 'tracer_symbolic_sized_receives', b'hello')
     simgr.run()
 
-    nose.tools.assert_false(simgr.crashed)
-    nose.tools.assert_true('traced' in simgr.stashes)
+    unittest.TestCase().assertFalse(simgr.crashed)
+    unittest.TestCase().assertTrue('traced' in simgr.stashes)
 
     simgr, _ = tracer_cgc(b, 'tracer_symbolic_sized_receives_nulls', b'\0'*20)
     simgr.run()
 
-    nose.tools.assert_false(simgr.crashed)
-    nose.tools.assert_true('traced' in simgr.stashes)
+    unittest.TestCase().assertFalse(simgr.crashed)
+    unittest.TestCase().assertTrue('traced' in simgr.stashes)
 
 
 def test_allocation_base_continuity():
@@ -159,7 +159,7 @@ def test_allocation_base_continuity():
     simgr, _ = tracer_cgc(b, 'tracer_allocation_base_continuity', b'')
     simgr.run()
 
-    nose.tools.assert_equal(simgr.traced[0].posix.dumps(1), correct_out)
+    unittest.TestCase().assertEqual(simgr.traced[0].posix.dumps(1), correct_out)
 
 
 def test_crash_addr_detection():
@@ -168,19 +168,19 @@ def test_crash_addr_detection():
     simgr, _ = tracer_cgc(b, 'tracer_crash_addr_detection', b'A'*700)
     simgr.run()
 
-    nose.tools.assert_true(simgr.crashed)
-    nose.tools.assert_true(simgr.crashed[0].solver.symbolic(simgr.crashed[0].regs.ip))
+    unittest.TestCase().assertTrue(simgr.crashed)
+    unittest.TestCase().assertTrue(simgr.crashed[0].solver.symbolic(simgr.crashed[0].regs.ip))
 
 
 def test_fauxware():
     if not sys.platform.startswith('linux'):
-        raise nose.SkipTest()
+        unittest.TestCase().skipTest()
 
     b = os.path.join(bin_location, "tests", "x86_64", "fauxware")
     simgr, _ = tracer_linux(b, 'tracer_fauxware', b'A'*18, remove_options={angr.options.CPUID_SYMBOLIC})
     simgr.run()
 
-    nose.tools.assert_true('traced' in simgr.stashes)
+    unittest.TestCase().assertTrue('traced' in simgr.stashes)
 
 def test_rollback_on_symbolic_conditional_exit():
     # Test if state is correctly rolled back to before start of block in case block cannot be executed in unicorn engine

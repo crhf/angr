@@ -2,7 +2,7 @@ from claripy import BVS
 from angr.storage import SimFile
 import pickle
 import shutil
-import nose
+import unittest
 import angr
 import gc
 import os
@@ -77,12 +77,12 @@ def teardown():
     except:
         pass
 
-@nose.with_setup(setup, teardown)
 def test_pickling():
     make_pickles()
     load_pickles()
     gc.collect()
     load_pickles()
+    teardown()
 
 
 def test_project_pickling():

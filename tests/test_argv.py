@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr, claripy
 
 import logging
@@ -14,12 +14,12 @@ def test_mips():
     s = proj.factory.entry_state(args = ['aaa', "Yan is a noob"], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 1)
+    unittest.TestCase().assertEqual(len(xpl.found), 1)
 
     s = proj.factory.entry_state(args = ['aaa', 'Yan is not a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 0)
+    unittest.TestCase().assertEqual(len(xpl.found), 0)
 
     # symbolic command line argument
     arg = claripy.BVS('arg_2', 50*8)
@@ -29,7 +29,7 @@ def test_mips():
     found = xpl.found[0]
     conc = found.solver.eval(found.memory.load(found.registers.load('sp'), 400), cast_to=bytes)
 
-    nose.tools.assert_equal(b"Yan is a noob" in conc, True)
+    unittest.TestCase().assertEqual(b"Yan is a noob" in conc, True)
 
 def test_mipsel():
     proj = angr.Project(os.path.join(test_location, 'mipsel', 'argv_test'))
@@ -37,12 +37,12 @@ def test_mipsel():
     s = proj.factory.entry_state(args = ['aaa', 'Yan is a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 1)
+    unittest.TestCase().assertEqual(len(xpl.found), 1)
 
     s = proj.factory.entry_state(args = ['aaa', 'Yan is not a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 0)
+    unittest.TestCase().assertEqual(len(xpl.found), 0)
 
     # symbolic args
     s = proj.factory.entry_state(args = ['aaa', claripy.BVS('arg_2', 50*8)], env ={"HOME": "/home/angr"})
@@ -51,7 +51,7 @@ def test_mipsel():
     found = xpl.found[0]
     conc = found.solver.eval(found.memory.load(found.registers.load('sp'), 400), cast_to=bytes)
 
-    nose.tools.assert_equal(b"Yan is a noob" in conc, True)
+    unittest.TestCase().assertEqual(b"Yan is a noob" in conc, True)
 
 def test_i386():
     proj = angr.Project(os.path.join(test_location, 'i386', 'argv_test'))
@@ -59,12 +59,12 @@ def test_i386():
     s = proj.factory.entry_state(args = ['aaa', 'Yan is a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 1)
+    unittest.TestCase().assertEqual(len(xpl.found), 1)
 
     s = proj.factory.entry_state(args = ['aaa', 'Yan is not a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 0)
+    unittest.TestCase().assertEqual(len(xpl.found), 0)
 
     # symbolic args
     s = proj.factory.entry_state(args = ['aaa', claripy.BVS('arg_2', 50*8)], env ={"HOME": "/home/angr"})
@@ -73,7 +73,7 @@ def test_i386():
     found = xpl.found[0]
     conc = found.solver.eval(found.memory.load(found.registers.load('sp'), 400), cast_to=bytes)
 
-    nose.tools.assert_equal(b"Yan is a noob" in conc, True)
+    unittest.TestCase().assertEqual(b"Yan is a noob" in conc, True)
 
 def test_amd64():
     proj = angr.Project(os.path.join(test_location, 'x86_64', 'argv_test'))
@@ -81,12 +81,12 @@ def test_amd64():
     s = proj.factory.entry_state(args = ['aaa', 'Yan is a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 1)
+    unittest.TestCase().assertEqual(len(xpl.found), 1)
 
     s = proj.factory.entry_state(args = ['aaa', 'Yan is not a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 0)
+    unittest.TestCase().assertEqual(len(xpl.found), 0)
 
     # symbolic args
     s = proj.factory.entry_state(args = ['aaa', claripy.BVS('arg_2', 50*8)], env ={"HOME": "/home/angr"})
@@ -95,7 +95,7 @@ def test_amd64():
     found = xpl.found[0]
     conc = found.solver.eval(found.memory.load(found.registers.load('sp'), 400), cast_to=bytes)
 
-    nose.tools.assert_equal(b"Yan is a noob" in conc, True)
+    unittest.TestCase().assertEqual(b"Yan is a noob" in conc, True)
 
 def test_arm():
     proj = angr.Project(os.path.join(test_location, 'armel', 'argv_test'))
@@ -104,12 +104,12 @@ def test_arm():
     s = proj.factory.entry_state(args = ['aaa', 'Yan is a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 1)
+    unittest.TestCase().assertEqual(len(xpl.found), 1)
 
     s = proj.factory.entry_state(args = ['aaa', 'Yan is not a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 0)
+    unittest.TestCase().assertEqual(len(xpl.found), 0)
 
     # symbolic args
     s = proj.factory.entry_state(args = ['aaa', claripy.BVS('arg_2', 50*8)], env ={"HOME": "/home/angr"})
@@ -118,7 +118,7 @@ def test_arm():
     found = xpl.found[0]
     conc = found.solver.eval(found.memory.load(found.registers.load('sp'), 400), cast_to=bytes)
 
-    nose.tools.assert_equal(b"Yan is a noob" in conc, True)
+    unittest.TestCase().assertEqual(b"Yan is a noob" in conc, True)
 
 def test_ppc32():
     proj = angr.Project(os.path.join(test_location, 'ppc', 'argv_test'))
@@ -127,12 +127,12 @@ def test_ppc32():
     s = proj.factory.entry_state(args = ['aaa', 'Yan is a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 1)
+    unittest.TestCase().assertEqual(len(xpl.found), 1)
 
     s = proj.factory.entry_state(args = ['aaa', 'Yan is not a noob'], env ={"HOME": "/home/angr"})
     xpl = proj.factory.simulation_manager(s).explore(find=r_addr)
 
-    nose.tools.assert_equal(len(xpl.found), 0)
+    unittest.TestCase().assertEqual(len(xpl.found), 0)
 
     # symbolic args
     s = proj.factory.entry_state(args = ['aaa', claripy.BVS('arg_2', 50*8)], env ={"HOME": "/home/angr"})
@@ -141,7 +141,7 @@ def test_ppc32():
     found = xpl.found[0]
     conc = found.solver.eval(found.memory.load(found.registers.load('sp'), 400), cast_to=bytes)
 
-    nose.tools.assert_equal(b"Yan is a noob" in conc, True)
+    unittest.TestCase().assertEqual(b"Yan is a noob" in conc, True)
 
 if __name__ == "__main__":
     test_mips()

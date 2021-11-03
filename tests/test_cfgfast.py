@@ -4,7 +4,7 @@ import sys
 import unittest
 
 from nose.plugins.attrib import attr
-import nose.tools
+import unittest
 
 import archinfo
 import angr
@@ -31,30 +31,30 @@ def cfg_fast_functions_check(arch, binary_path, func_addrs, func_features):
     proj = angr.Project(path, load_options={'auto_load_libs': False})
 
     cfg = proj.analyses.CFGFast()
-    nose.tools.assert_true(set(cfg.kb.functions.keys()).issuperset(func_addrs))
+    unittest.TestCase().assertTrue(set(cfg.kb.functions.keys()).issuperset(func_addrs))
 
     for func_addr, feature_dict in func_features.items():
         returning = feature_dict.get("returning", "undefined")
         if returning != "undefined":
-            nose.tools.assert_is(cfg.kb.functions.function(addr=func_addr).returning, returning)
+            unittest.TestCase().assertIs(cfg.kb.functions.function(addr=func_addr).returning, returning)
 
     # Segment only
     cfg = proj.analyses.CFGFast(force_segment=True)
-    nose.tools.assert_true(set(cfg.kb.functions.keys()).issuperset(func_addrs))
+    unittest.TestCase().assertTrue(set(cfg.kb.functions.keys()).issuperset(func_addrs))
 
     for func_addr, feature_dict in func_features.items():
         returning = feature_dict.get("returning", "undefined")
         if returning != "undefined":
-            nose.tools.assert_is(cfg.kb.functions.function(addr=func_addr).returning, returning)
+            unittest.TestCase().assertIs(cfg.kb.functions.function(addr=func_addr).returning, returning)
 
     # with normalization enabled
     cfg = proj.analyses.CFGFast(force_segment=True, normalize=True)
-    nose.tools.assert_true(set(cfg.kb.functions.keys()).issuperset(func_addrs))
+    unittest.TestCase().assertTrue(set(cfg.kb.functions.keys()).issuperset(func_addrs))
 
     for func_addr, feature_dict in func_features.items():
         returning = feature_dict.get("returning", "undefined")
         if returning != "undefined":
-            nose.tools.assert_is(cfg.kb.functions.function(addr=func_addr).returning, returning)
+            unittest.TestCase().assertIs(cfg.kb.functions.function(addr=func_addr).returning, returning)
 
 def cfg_fast_edges_check(arch, binary_path, edges):
     """
@@ -74,9 +74,9 @@ def cfg_fast_edges_check(arch, binary_path, edges):
     for src, dst in edges:
         src_node = cfg.model.get_any_node(src)
         dst_node = cfg.model.get_any_node(dst)
-        nose.tools.assert_is_not_none(src_node, msg="CFG node 0x%x is not found." % src)
-        nose.tools.assert_is_not_none(dst_node, msg="CFG node 0x%x is not found." % dst)
-        nose.tools.assert_in(dst_node, src_node.successors,
+        unittest.TestCase().assertIsNotNone(src_node, msg="CFG node 0x%x is not found." % src)
+        unittest.TestCase().assertIsNotNone(dst_node, msg="CFG node 0x%x is not found." % dst)
+        unittest.TestCase().assertIn(dst_node, src_node.successors,
                              msg="CFG edge %s-%s is not found." % (src_node, dst_node)
                              )
 
@@ -398,13 +398,13 @@ def test_cfg_about_time():
     cfg = proj.analyses.CFG()
 
     # a PLT stub that should be removed
-    nose.tools.assert_not_in(0x401026, cfg.kb.functions)
+    unittest.TestCase().assertNotIn(0x401026, cfg.kb.functions)
     # a PLT stub that should be removed
-    nose.tools.assert_not_in(0x4010a6, cfg.kb.functions)
+    unittest.TestCase().assertNotIn(0x4010a6, cfg.kb.functions)
     # a PLT stub that should be removed
-    nose.tools.assert_not_in(0x40115e, cfg.kb.functions)
+    unittest.TestCase().assertNotIn(0x40115e, cfg.kb.functions)
     # the start function that should not be removed
-    nose.tools.assert_in(proj.entry, cfg.kb.functions)
+    unittest.TestCase().assertIn(proj.entry, cfg.kb.functions)
 
 
 def test_segment_list_0():
@@ -412,11 +412,11 @@ def test_segment_list_0():
     seg_list.occupy(0, 1, "code")
     seg_list.occupy(2, 3, "code")
 
-    nose.tools.assert_equal(len(seg_list), 2)
-    nose.tools.assert_equal(seg_list._list[0].end, 1)
-    nose.tools.assert_equal(seg_list._list[1].end, 5)
-    nose.tools.assert_equal(seg_list.is_occupied(4), True)
-    nose.tools.assert_equal(seg_list.is_occupied(5), False)
+    unittest.TestCase().assertEqual(len(seg_list), 2)
+    unittest.TestCase().assertEqual(seg_list._list[0].end, 1)
+    unittest.TestCase().assertEqual(seg_list._list[1].end, 5)
+    unittest.TestCase().assertEqual(seg_list.is_occupied(4), True)
+    unittest.TestCase().assertEqual(seg_list.is_occupied(5), False)
 
 def test_segment_list_1():
     seg_list = SegmentList()
@@ -425,9 +425,9 @@ def test_segment_list_1():
     seg_list.occupy(0, 1, "code")
     seg_list.occupy(1, 2, "code")
 
-    nose.tools.assert_equal(len(seg_list), 1)
-    nose.tools.assert_equal(seg_list._list[0].start, 0)
-    nose.tools.assert_equal(seg_list._list[0].end, 3)
+    unittest.TestCase().assertEqual(len(seg_list), 1)
+    unittest.TestCase().assertEqual(seg_list._list[0].start, 0)
+    unittest.TestCase().assertEqual(seg_list._list[0].end, 3)
 
 def test_segment_list_2():
     seg_list = SegmentList()
@@ -436,11 +436,11 @@ def test_segment_list_2():
     seg_list.occupy(0, 1, "code")
     seg_list.occupy(1, 2, "data")
 
-    nose.tools.assert_equal(len(seg_list), 2)
-    nose.tools.assert_equal(seg_list._list[0].start, 0)
-    nose.tools.assert_equal(seg_list._list[0].end, 1)
-    nose.tools.assert_equal(seg_list._list[1].start, 1)
-    nose.tools.assert_equal(seg_list._list[1].end, 3)
+    unittest.TestCase().assertEqual(len(seg_list), 2)
+    unittest.TestCase().assertEqual(seg_list._list[0].start, 0)
+    unittest.TestCase().assertEqual(seg_list._list[0].end, 1)
+    unittest.TestCase().assertEqual(seg_list._list[1].start, 1)
+    unittest.TestCase().assertEqual(seg_list._list[1].end, 3)
 
 def test_segment_list_3():
     seg_list = SegmentList()
@@ -450,19 +450,19 @@ def test_segment_list_3():
     seg_list.occupy(5, 5, "code")
     seg_list.occupy(1, 2, "data")
 
-    nose.tools.assert_equal(len(seg_list), 3)
+    unittest.TestCase().assertEqual(len(seg_list), 3)
 
-    nose.tools.assert_equal(seg_list._list[0].start, 0)
-    nose.tools.assert_equal(seg_list._list[0].end, 1)
-    nose.tools.assert_equal(seg_list._list[0].sort, "code")
+    unittest.TestCase().assertEqual(seg_list._list[0].start, 0)
+    unittest.TestCase().assertEqual(seg_list._list[0].end, 1)
+    unittest.TestCase().assertEqual(seg_list._list[0].sort, "code")
 
-    nose.tools.assert_equal(seg_list._list[1].start, 1)
-    nose.tools.assert_equal(seg_list._list[1].end, 3)
-    nose.tools.assert_equal(seg_list._list[1].sort, "data")
+    unittest.TestCase().assertEqual(seg_list._list[1].start, 1)
+    unittest.TestCase().assertEqual(seg_list._list[1].end, 3)
+    unittest.TestCase().assertEqual(seg_list._list[1].sort, "data")
 
-    nose.tools.assert_equal(seg_list._list[2].start, 3)
-    nose.tools.assert_equal(seg_list._list[2].end, 10)
-    nose.tools.assert_equal(seg_list._list[2].sort, "code")
+    unittest.TestCase().assertEqual(seg_list._list[2].start, 3)
+    unittest.TestCase().assertEqual(seg_list._list[2].end, 10)
+    unittest.TestCase().assertEqual(seg_list._list[2].sort, "code")
 
 def test_segment_list_4():
     seg_list = SegmentList()
@@ -471,9 +471,9 @@ def test_segment_list_4():
     seg_list.occupy(4, 1, "code")
     seg_list.occupy(2, 2, "code")
 
-    nose.tools.assert_equal(len(seg_list), 1)
-    nose.tools.assert_equal(seg_list._list[0].start, 2)
-    nose.tools.assert_equal(seg_list._list[0].end, 10)
+    unittest.TestCase().assertEqual(len(seg_list), 1)
+    unittest.TestCase().assertEqual(seg_list._list[0].start, 2)
+    unittest.TestCase().assertEqual(seg_list._list[0].end, 10)
 
 def test_segment_list_5():
     seg_list = SegmentList()
@@ -482,15 +482,15 @@ def test_segment_list_5():
     seg_list.occupy(4, 1, "code")
     seg_list.occupy(2, 2, "data")
 
-    nose.tools.assert_equal(len(seg_list), 3)
-    nose.tools.assert_equal(seg_list._list[0].start, 2)
-    nose.tools.assert_equal(seg_list._list[2].end, 10)
+    unittest.TestCase().assertEqual(len(seg_list), 3)
+    unittest.TestCase().assertEqual(seg_list._list[0].start, 2)
+    unittest.TestCase().assertEqual(seg_list._list[2].end, 10)
 
     seg_list.occupy(3, 2, "data")
 
-    nose.tools.assert_equal(len(seg_list), 1)
-    nose.tools.assert_equal(seg_list._list[0].start, 2)
-    nose.tools.assert_equal(seg_list._list[0].end, 10)
+    unittest.TestCase().assertEqual(len(seg_list), 1)
+    unittest.TestCase().assertEqual(seg_list._list[0].start, 2)
+    unittest.TestCase().assertEqual(seg_list._list[0].end, 10)
 
 def test_segment_list_6():
     seg_list = SegmentList()
@@ -498,14 +498,14 @@ def test_segment_list_6():
     seg_list.occupy(10, 20, "code")
     seg_list.occupy(9, 2, "data")
 
-    nose.tools.assert_equal(len(seg_list), 2)
-    nose.tools.assert_equal(seg_list._list[0].start, 9)
-    nose.tools.assert_equal(seg_list._list[0].end, 11)
-    nose.tools.assert_equal(seg_list._list[0].sort, 'data')
+    unittest.TestCase().assertEqual(len(seg_list), 2)
+    unittest.TestCase().assertEqual(seg_list._list[0].start, 9)
+    unittest.TestCase().assertEqual(seg_list._list[0].end, 11)
+    unittest.TestCase().assertEqual(seg_list._list[0].sort, 'data')
 
-    nose.tools.assert_equal(seg_list._list[1].start, 11)
-    nose.tools.assert_equal(seg_list._list[1].end, 30)
-    nose.tools.assert_equal(seg_list._list[1].sort, 'code')
+    unittest.TestCase().assertEqual(seg_list._list[1].start, 11)
+    unittest.TestCase().assertEqual(seg_list._list[1].end, 30)
+    unittest.TestCase().assertEqual(seg_list._list[1].sort, 'code')
 
 
 #
@@ -519,14 +519,14 @@ def test_serialization_cfgnode():
     cfg = proj.analyses.CFGFast()
     # the first node
     node = cfg.model.get_any_node(proj.entry)
-    nose.tools.assert_is_not_none(node)
+    unittest.TestCase().assertIsNotNone(node)
 
     b = node.serialize()
-    nose.tools.assert_greater(len(b), 0)
+    unittest.TestCase().assertGreater(len(b), 0)
     new_node = CFGNode.parse(b)
-    nose.tools.assert_equal(new_node.addr, node.addr)
-    nose.tools.assert_equal(new_node.size, node.size)
-    nose.tools.assert_equal(new_node.block_id, node.block_id)
+    unittest.TestCase().assertEqual(new_node.addr, node.addr)
+    unittest.TestCase().assertEqual(new_node.size, node.size)
+    unittest.TestCase().assertEqual(new_node.block_id, node.block_id)
 
 
 def test_serialization_cfgfast():
@@ -537,17 +537,17 @@ def test_serialization_cfgfast():
     cfg = proj1.analyses.CFGFast()
     # parse the entire graph
     b = cfg.model.serialize()
-    nose.tools.assert_greater(len(b), 0)
+    unittest.TestCase().assertGreater(len(b), 0)
 
     # simulate importing a cfg from another tool
     cfg_model = CFGModel.parse(b, cfg_manager=proj2.kb.cfgs)
 
-    nose.tools.assert_equal(len(cfg_model.graph.nodes), len(cfg.graph.nodes))
-    nose.tools.assert_equal(len(cfg_model.graph.edges), len(cfg.graph.edges))
+    unittest.TestCase().assertEqual(len(cfg_model.graph.nodes), len(cfg.graph.nodes))
+    unittest.TestCase().assertEqual(len(cfg_model.graph.edges), len(cfg.graph.edges))
 
     n1 = cfg.model.get_any_node(proj1.entry)
     n2 = cfg_model.get_any_node(proj1.entry)
-    nose.tools.assert_equal(n1, n2)
+    unittest.TestCase().assertEqual(n1, n2)
 
 
 #
@@ -563,11 +563,11 @@ def test_cfg_copy():
     for attribute in cfg_copy.__dict__:
         if attribute in ['_graph', '_seg_list', '_model']:
             continue
-        nose.tools.assert_equal(getattr(cfg, attribute), getattr(cfg_copy, attribute))
+        unittest.TestCase().assertEqual(getattr(cfg, attribute), getattr(cfg_copy, attribute))
 
-    nose.tools.assert_not_equal(id(cfg.model), id(cfg_copy.model))
-    nose.tools.assert_not_equal(id(cfg.model.graph), id(cfg_copy.model.graph))
-    nose.tools.assert_not_equal(id(cfg._seg_list), id(cfg_copy._seg_list))
+    unittest.TestCase().assertNotEqual(id(cfg.model), id(cfg_copy.model))
+    unittest.TestCase().assertNotEqual(id(cfg.model.graph), id(cfg_copy.model.graph))
+    unittest.TestCase().assertNotEqual(id(cfg._seg_list), id(cfg_copy._seg_list))
 
 #
 # Alignment bytes
@@ -580,10 +580,10 @@ def test_cfg_0_pe_msvc_debug_nocc():
 
     # make sure 0x140015683 is marked as alignments
     sort = cfg._seg_list.occupied_by_sort(0x140016583)
-    nose.tools.assert_equal(sort, "alignment", "Address 0x140016583 is not marked as alignment. The CC detection is "
+    unittest.TestCase().assertEqual(sort, "alignment", "Address 0x140016583 is not marked as alignment. The CC detection is "
                                                "probably failing.")
 
-    nose.tools.assert_not_in(0x140015683, cfg.kb.functions)
+    unittest.TestCase().assertNotIn(0x140015683, cfg.kb.functions)
 
 #
 # Indirect jump resolvers
@@ -599,18 +599,18 @@ def test_resolve_x86_elf_pic_plt():
 
     # puts
     puts_node = cfg.model.get_any_node(0x4005b0)
-    nose.tools.assert_is_not_none(puts_node)
+    unittest.TestCase().assertIsNotNone(puts_node)
 
     # there should be only one successor, which jumps to SimProcedure puts
-    nose.tools.assert_equal(len(puts_node.successors), 1)
+    unittest.TestCase().assertEqual(len(puts_node.successors), 1)
     puts_successor = puts_node.successors[0]
-    nose.tools.assert_equal(puts_successor.addr, proj.loader.find_symbol('puts').rebased_addr)
+    unittest.TestCase().assertEqual(puts_successor.addr, proj.loader.find_symbol('puts').rebased_addr)
 
     # the SimProcedure puts should have more than one successors, which are all return targets
-    nose.tools.assert_equal(len(puts_successor.successors), 3)
+    unittest.TestCase().assertEqual(len(puts_successor.successors), 3)
     simputs_successor = puts_successor.successors
     return_targets = set(a.addr for a in simputs_successor)
-    nose.tools.assert_equal(return_targets, { 0x400800, 0x40087e, 0x4008b6 })
+    unittest.TestCase().assertEqual(return_targets, { 0x400800, 0x40087e, 0x4008b6 })
 
 #
 # Function names
@@ -624,14 +624,14 @@ def test_function_names_for_unloaded_libraries():
 
     function_names = [ f.name if not f.is_plt else 'plt_' + f.name for f in cfg.functions.values() ]
 
-    nose.tools.assert_in('plt_puts', function_names)
-    nose.tools.assert_in('plt_read', function_names)
-    nose.tools.assert_in('plt___stack_chk_fail', function_names)
-    nose.tools.assert_in('plt_exit', function_names)
-    nose.tools.assert_in('puts', function_names)
-    nose.tools.assert_in('read', function_names)
-    nose.tools.assert_in('__stack_chk_fail', function_names)
-    nose.tools.assert_in('exit', function_names)
+    unittest.TestCase().assertIn('plt_puts', function_names)
+    unittest.TestCase().assertIn('plt_read', function_names)
+    unittest.TestCase().assertIn('plt___stack_chk_fail', function_names)
+    unittest.TestCase().assertIn('plt_exit', function_names)
+    unittest.TestCase().assertIn('puts', function_names)
+    unittest.TestCase().assertIn('read', function_names)
+    unittest.TestCase().assertIn('__stack_chk_fail', function_names)
+    unittest.TestCase().assertIn('exit', function_names)
 
 #
 # Basic blocks
@@ -648,15 +648,15 @@ def test_block_instruction_addresses_armhf():
     # all instruction addresses of the block must be odd
     block = next((b for b in main_func.blocks if b.addr == main_func.addr))
 
-    nose.tools.assert_equal(len(block.instruction_addrs), 12)
+    unittest.TestCase().assertEqual(len(block.instruction_addrs), 12)
     for instr_addr in block.instruction_addrs:
-        nose.tools.assert_true(instr_addr % 2 == 1)
+        unittest.TestCase().assertTrue(instr_addr % 2 == 1)
 
     main_node = cfg.model.get_any_node(main_func.addr)
-    nose.tools.assert_is_not_none(main_node)
-    nose.tools.assert_equal(len(main_node.instruction_addrs), 12)
+    unittest.TestCase().assertIsNotNone(main_node)
+    unittest.TestCase().assertEqual(len(main_node.instruction_addrs), 12)
     for instr_addr in main_node.instruction_addrs:
-        nose.tools.assert_true(instr_addr % 2 == 1)
+        unittest.TestCase().assertTrue(instr_addr % 2 == 1)
 
 #
 # Tail-call optimization detection
@@ -677,15 +677,15 @@ def test_tail_call_optimization_detection_armel():
                                 )
 
     all_func_addrs = set(cfg.functions.keys())
-    nose.tools.assert_not_in(0x80010b5, all_func_addrs, "0x80010b5 is inside Reset_Handler().")
-    nose.tools.assert_not_in(0x8003ef9, all_func_addrs, "0x8003ef9 is inside memcpy().")
-    nose.tools.assert_not_in(0x8008419, all_func_addrs, "0x8008419 is inside __mulsf3().")
+    unittest.TestCase().assertNotIn(0x80010b5, all_func_addrs, "0x80010b5 is inside Reset_Handler().")
+    unittest.TestCase().assertNotIn(0x8003ef9, all_func_addrs, "0x8003ef9 is inside memcpy().")
+    unittest.TestCase().assertNotIn(0x8008419, all_func_addrs, "0x8008419 is inside __mulsf3().")
 
     # Functions that are jumped to from tail-calls
     tail_call_funcs = [ 0x8002bc1, 0x80046c1, 0x8000281, 0x8001bdb, 0x8002839, 0x80037ad, 0x8002c09, 0x8004165,
                         0x8004be1, 0x8002eb1 ]
     for member in tail_call_funcs:
-        nose.tools.assert_in(member, all_func_addrs)
+        unittest.TestCase().assertIn(member, all_func_addrs)
 
     # also test for tailcall return addresses
 
@@ -712,11 +712,11 @@ def test_tail_call_optimization_detection_armel():
         return_block_addrs = [rb.addr for rb in cfg.model.get_successors(returning_block)]
         msg = "%x: unequal sizes of expected_addrs [%d] and return_block_addrs [%d]" % \
                             (returning_block_addr, len(expected_return_addrs), len(return_block_addrs))
-        nose.tools.assert_equal(len(return_block_addrs), len(expected_return_addrs), msg)
+        unittest.TestCase().assertEqual(len(return_block_addrs), len(expected_return_addrs), msg)
         for expected_addr in expected_return_addrs:
                 msg = "expected retaddr %x not found for returning_block %x" % \
                                         (expected_addr, returning_block_addr)
-                nose.tools.assert_in(expected_addr, return_block_addrs, msg)
+                unittest.TestCase().assertIn(expected_addr, return_block_addrs, msg)
 
 #
 # Incorrect function-leading blocks merging
@@ -736,13 +736,13 @@ def test_function_leading_blocks_merging():
                                 detect_tail_calls=True
                                 )
 
-    nose.tools.assert_in(0x8000799, cfg.kb.functions, "Function 0x8000799 does not exist.")
-    nose.tools.assert_not_in(0x800079b, cfg.kb.functions, "Function 0x800079b does not exist.")
-    nose.tools.assert_not_in(0x800079b, cfg.kb.functions[0x8000799].block_addrs_set,
+    unittest.TestCase().assertIn(0x8000799, cfg.kb.functions, "Function 0x8000799 does not exist.")
+    unittest.TestCase().assertNotIn(0x800079b, cfg.kb.functions, "Function 0x800079b does not exist.")
+    unittest.TestCase().assertNotIn(0x800079b, cfg.kb.functions[0x8000799].block_addrs_set,
                              "Block 0x800079b is found, but it should not exist.")
-    nose.tools.assert_in(0x8000799, cfg.kb.functions[0x8000799].block_addrs_set,
+    unittest.TestCase().assertIn(0x8000799, cfg.kb.functions[0x8000799].block_addrs_set,
                          "Block 0x8000799 is not found inside function 0x8000799.")
-    nose.tools.assert_equal(next(iter(b for b in cfg.kb.functions[0x8000799].blocks if b.addr == 0x8000799)).size, 6,
+    unittest.TestCase().assertEqual(next(iter(b for b in cfg.kb.functions[0x8000799].blocks if b.addr == 0x8000799)).size, 6,
                             "Block 0x800079b has an incorrect size.")
 
 
@@ -760,11 +760,11 @@ def test_blanket_fauxware():
     cfb = proj.analyses.CFBlanket(kb=cfg.kb)
 
     # it should raise a key error when calling floor_addr on address 0 because nothing is mapped there
-    nose.tools.assert_raises(KeyError, cfb.floor_addr, 0)
+    unittest.TestCase().assertRaises(KeyError, cfb.floor_addr, 0)
     # an instruction (or a block) starts at 0x400580
-    nose.tools.assert_equal(cfb.floor_addr(0x400581), 0x400580)
+    unittest.TestCase().assertEqual(cfb.floor_addr(0x400581), 0x400580)
     # a block ends at 0x4005a9 (exclusive)
-    nose.tools.assert_equal(cfb.ceiling_addr(0x400581), 0x4005a9)
+    unittest.TestCase().assertEqual(cfb.ceiling_addr(0x400581), 0x4005a9)
 
 
 #
@@ -781,16 +781,16 @@ def test_data_references_x86_64():
     memory_data = cfg.memory_data
     # There is no code reference
     code_ref_count = len([d for d in memory_data.values() if d.sort == MemoryDataSort.CodeReference])
-    nose.tools.assert_greater_equal(code_ref_count, 0, msg="There should be no code reference.")
+    unittest.TestCase().assertGreaterEqual(code_ref_count, 0, msg="There should be no code reference.")
 
     # There are at least 2 pointer arrays
     ptr_array_count = len([d for d in memory_data.values() if d.sort == MemoryDataSort.PointerArray])
-    nose.tools.assert_greater(ptr_array_count, 2, msg="Missing some pointer arrays.")
+    unittest.TestCase().assertGreater(ptr_array_count, 2, msg="Missing some pointer arrays.")
 
-    nose.tools.assert_in(0x4008d0, memory_data)
+    unittest.TestCase().assertIn(0x4008d0, memory_data)
     sneaky_str = memory_data[0x4008d0]
-    nose.tools.assert_equal(sneaky_str.sort, "string")
-    nose.tools.assert_equal(sneaky_str.content, b"SOSNEAKY")
+    unittest.TestCase().assertEqual(sneaky_str.sort, "string")
+    unittest.TestCase().assertEqual(sneaky_str.content, b"SOSNEAKY")
 
 
 def test_data_references_mipsel():
@@ -803,36 +803,36 @@ def test_data_references_mipsel():
     memory_data = cfg.memory_data
     # There is no code reference
     code_ref_count = len([d for d in memory_data.values() if d.sort == MemoryDataSort.CodeReference])
-    nose.tools.assert_greater_equal(code_ref_count, 0, msg="There should be no code reference.")
+    unittest.TestCase().assertGreaterEqual(code_ref_count, 0, msg="There should be no code reference.")
 
     # There are at least 2 pointer arrays
     ptr_array_count = len([d for d in memory_data.values() if d.sort == MemoryDataSort.PointerArray])
-    nose.tools.assert_greater_equal(ptr_array_count, 1, msg="Missing some pointer arrays.")
+    unittest.TestCase().assertGreaterEqual(ptr_array_count, 1, msg="Missing some pointer arrays.")
 
-    nose.tools.assert_in(0x400c00, memory_data)
+    unittest.TestCase().assertIn(0x400c00, memory_data)
     sneaky_str = memory_data[0x400c00]
-    nose.tools.assert_equal(sneaky_str.sort, "string")
-    nose.tools.assert_equal(sneaky_str.content, b"SOSNEAKY")
+    unittest.TestCase().assertEqual(sneaky_str.sort, "string")
+    unittest.TestCase().assertEqual(sneaky_str.content, b"SOSNEAKY")
 
-    nose.tools.assert_in(0x400c0c, memory_data)
+    unittest.TestCase().assertIn(0x400c0c, memory_data)
     str_ = memory_data[0x400c0c]
-    nose.tools.assert_equal(str_.sort, "string")
-    nose.tools.assert_equal(str_.content, b"Welcome to the admin console, trusted user!")
+    unittest.TestCase().assertEqual(str_.sort, "string")
+    unittest.TestCase().assertEqual(str_.content, b"Welcome to the admin console, trusted user!")
 
-    nose.tools.assert_in(0x400c38, memory_data)
+    unittest.TestCase().assertIn(0x400c38, memory_data)
     str_ = memory_data[0x400c38]
-    nose.tools.assert_equal(str_.sort, "string")
-    nose.tools.assert_equal(str_.content, b"Go away!")
+    unittest.TestCase().assertEqual(str_.sort, "string")
+    unittest.TestCase().assertEqual(str_.content, b"Go away!")
 
-    nose.tools.assert_in(0x400c44, memory_data)
+    unittest.TestCase().assertIn(0x400c44, memory_data)
     str_ = memory_data[0x400c44]
-    nose.tools.assert_equal(str_.sort, "string")
-    nose.tools.assert_equal(str_.content, b"Username: ")
+    unittest.TestCase().assertEqual(str_.sort, "string")
+    unittest.TestCase().assertEqual(str_.content, b"Username: ")
 
-    nose.tools.assert_in(0x400c50, memory_data)
+    unittest.TestCase().assertIn(0x400c50, memory_data)
     str_ = memory_data[0x400c50]
-    nose.tools.assert_equal(str_.sort, "string")
-    nose.tools.assert_equal(str_.content, b"Password: ")
+    unittest.TestCase().assertEqual(str_.sort, "string")
+    unittest.TestCase().assertEqual(str_.content, b"Password: ")
 
 
 #
@@ -855,9 +855,9 @@ def test_cfg_with_patches():
     # with this patch, there should only be one block with one instruction in authenticate()
     _ = proj.analyses.CFGFast(kb=kb, use_patches=True)
     patched_func = kb.functions['authenticate']
-    nose.tools.assert_equal(len(patched_func.block_addrs_set), 1)
+    unittest.TestCase().assertEqual(len(patched_func.block_addrs_set), 1)
     block = patched_func._get_block(auth_func_addr)
-    nose.tools.assert_equal(len(block.instruction_addrs), 1)
+    unittest.TestCase().assertEqual(len(block.instruction_addrs), 1)
 
     # let's try to patch the second instruction of that function to ret
     kb = angr.KnowledgeBase(proj)
@@ -866,16 +866,16 @@ def test_cfg_with_patches():
     # with this patch, there should only be one block with two instructions in authenticate()
     _ = proj.analyses.CFGFast(kb=kb, use_patches=True)
     patched_func = kb.functions['authenticate']
-    nose.tools.assert_equal(len(patched_func.block_addrs_set), 1)
+    unittest.TestCase().assertEqual(len(patched_func.block_addrs_set), 1)
     block = patched_func._get_block(auth_func_addr)
-    nose.tools.assert_equal(len(block.instruction_addrs), 2)
+    unittest.TestCase().assertEqual(len(block.instruction_addrs), 2)
 
     # finally, if we generate a new CFG on a KB without any patch, we should still see the normal function (with 10
     # blocks)
     kb = angr.KnowledgeBase(proj)
     _ = proj.analyses.CFGFast(kb=kb, use_patches=True)
     not_patched_func = kb.functions['authenticate']
-    nose.tools.assert_equal(len(not_patched_func.block_addrs_set), 10)
+    unittest.TestCase().assertEqual(len(not_patched_func.block_addrs_set), 10)
 
 
 def test_unresolvable_targets():
@@ -888,7 +888,7 @@ def test_unresolvable_targets():
 
     true_endpoint_addrs = {0x8048bbc, 0x8048af5, 0x8048b5c, 0x8048a41, 0x8048aa8}
     endpoint_addrs = {node.addr for node in func.endpoints}
-    nose.tools.assert_equal(len(endpoint_addrs.symmetric_difference(true_endpoint_addrs)), 0)
+    unittest.TestCase().assertEqual(len(endpoint_addrs.symmetric_difference(true_endpoint_addrs)), 0)
 
 
 def test_indirect_jump_to_outside():
@@ -899,8 +899,8 @@ def test_indirect_jump_to_outside():
 
     cfg = proj.analyses.CFGFast()
 
-    nose.tools.assert_equal(len(list(cfg.functions[0x404ee4].blocks)), 3)
-    nose.tools.assert_equal(set(ep.addr for ep in cfg.functions[0x404ee4].endpoints), { 0x404f00, 0x404f08 })
+    unittest.TestCase().assertEqual(len(list(cfg.functions[0x404ee4].blocks)), 3)
+    unittest.TestCase().assertEqual(set(ep.addr for ep in cfg.functions[0x404ee4].endpoints), { 0x404f00, 0x404f08 })
 
 
 def test_plt_stub_has_one_jumpout_site():
@@ -922,8 +922,8 @@ def test_generate_special_info():
 
     cfg = proj.analyses.CFGFast()
 
-    nose.tools.assert_true(any(func.info for func in cfg.functions.values()))
-    nose.tools.assert_equal(cfg.functions['main'].info['gp'], 0x418ca0)
+    unittest.TestCase().assertTrue(any(func.info for func in cfg.functions.values()))
+    unittest.TestCase().assertEqual(cfg.functions['main'].info['gp'], 0x418ca0)
 
 
 def test_load_from_shellcode():
@@ -931,7 +931,7 @@ def test_load_from_shellcode():
     proj = angr.load_shellcode('loop: dec ecx; jnz loop; ret', 'x86')
     cfg = proj.analyses.CFGFast()
 
-    nose.tools.assert_equal(len(cfg.model.nodes()), 2)
+    unittest.TestCase().assertEqual(len(cfg.model.nodes()), 2)
 
 def test_starting_point_ordering():
 
@@ -945,19 +945,19 @@ def test_starting_point_ordering():
 
     # if ordering is incorrect, edge to function 0x103D4 will not exist
     n = cfg.model.get_any_node(proj.entry)
-    nose.tools.assert_is_not_none(n)
-    nose.tools.assert_true(len(n.successors) > 0)
-    nose.tools.assert_true(len(n.successors[0].successors) > 0)
-    nose.tools.assert_equal(len(n.successors[0].successors[0].successors), 3)
+    unittest.TestCase().assertIsNotNone(n)
+    unittest.TestCase().assertTrue(len(n.successors) > 0)
+    unittest.TestCase().assertTrue(len(n.successors[0].successors) > 0)
+    unittest.TestCase().assertEqual(len(n.successors[0].successors[0].successors), 3)
 
     # now checking if path to the "real main" exists
-    nose.tools.assert_true(len(n.successors[0].successors[0].successors[1].successors) > 0)
+    unittest.TestCase().assertTrue(len(n.successors[0].successors[0].successors[1].successors) > 0)
     n = n.successors[0].successors[0].successors[1].successors[0]
 
-    nose.tools.assert_true(len(n.successors) > 0)
-    nose.tools.assert_true(len(n.successors[0].successors) > 0)
-    nose.tools.assert_true(len(n.successors[0].successors[0].successors) > 0)
-    nose.tools.assert_equal(n.successors[0].successors[0].successors[0].addr, 0x103D4)
+    unittest.TestCase().assertTrue(len(n.successors) > 0)
+    unittest.TestCase().assertTrue(len(n.successors[0].successors) > 0)
+    unittest.TestCase().assertTrue(len(n.successors[0].successors[0].successors) > 0)
+    unittest.TestCase().assertEqual(n.successors[0].successors[0].successors[0].addr, 0x103D4)
 
 
 def run_all():

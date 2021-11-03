@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr
 import subprocess
 import sys
@@ -12,7 +12,7 @@ test_location = os.path.dirname(os.path.realpath(__file__))
 
 def test_sscanf():
     if not sys.platform.startswith('linux'):
-        raise nose.SkipTest()
+        unittest.TestCase().skipTest()
 
     test_bin = os.path.join(test_location, "..", "..", "binaries", "tests", "x86_64", "sscanf_test")
     b = angr.Project(test_bin)
@@ -28,9 +28,9 @@ def test_sscanf():
         b"No switch\n",
     }
     pg.run()
-    nose.tools.assert_equal(len(pg.deadended), len(expected_outputs))
-    nose.tools.assert_equal(len(pg.active), 0)
-    nose.tools.assert_equal(len(pg.errored), 0)
+    unittest.TestCase().assertEqual(len(pg.deadended), len(expected_outputs))
+    unittest.TestCase().assertEqual(len(pg.active), 0)
+    unittest.TestCase().assertEqual(len(pg.errored), 0)
 
     # check the outputs
     pipe = subprocess.PIPE
@@ -42,10 +42,10 @@ def test_sscanf():
         # check the output works as expected
         p = subprocess.Popen(test_bin, stdout=pipe, stderr=pipe, stdin=pipe)
         ret = p.communicate(test_input)[0]
-        nose.tools.assert_equal(ret, test_output)
+        unittest.TestCase().assertEqual(ret, test_output)
 
     # check that all of the outputs were seen
-    nose.tools.assert_equal(len(expected_outputs), 0)
+    unittest.TestCase().assertEqual(len(expected_outputs), 0)
 
 if __name__ == "__main__":
     test_sscanf()

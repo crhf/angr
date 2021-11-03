@@ -1,5 +1,5 @@
 import angr
-import nose
+import unittest
 import os
 
 test_location = os.path.join(os.path.dirname(__file__), '..', '..', 'binaries', 'tests')
@@ -10,10 +10,10 @@ def run_0div(arch):
     s = p.factory.entry_state(add_options=angr.options.unicorn)
     simgr = p.factory.simulation_manager(s)
     simgr.run(n=5)
-    nose.tools.assert_equal(len(simgr.active), 1)
+    unittest.TestCase().assertEqual(len(simgr.active), 1)
     simgr.step()
-    nose.tools.assert_equal(len(simgr.errored), 1)
-    nose.tools.assert_true(isinstance(simgr.errored[0].error, angr.errors.SimZeroDivisionException))
+    unittest.TestCase().assertEquals(len(simgr.errored), 1)
+    unittest.TestCase().assertTrue(isinstance(simgr.errored[0].error, angr.errors.SimZeroDivisionException))
 
 def test_0div_exception():
     yield run_0div, 'i386'

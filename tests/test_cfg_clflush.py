@@ -1,7 +1,7 @@
 
 import os
 
-import nose
+import unittest
 
 import angr
 
@@ -20,8 +20,8 @@ def test_cfgfast_clflush():
                          function_prologues=False,
                          )
     node = cfg.get_any_node(0x4121aa)
-    nose.tools.assert_is_not_none(node)
-    nose.tools.assert_equal(len(node.successors), 1)
+    unittest.TestCase().assertIsNotNone(node)
+    unittest.TestCase().assertEqual(len(node.successors), 1)
 
 
 def test_cfgemulated_clflush():
@@ -30,8 +30,8 @@ def test_cfgemulated_clflush():
     # build a CFG of function 0x12190
     cfg = p.analyses.CFGEmulated(starts=(0x412190,))
     node = cfg.get_any_node(0x4121aa)
-    nose.tools.assert_is_not_none(node)
-    nose.tools.assert_equal(len(node.successors), 1)
+    unittest.TestCase().assertIsNotNone(node)
+    unittest.TestCase().assertEqual(len(node.successors), 1)
 
 
 if __name__ == "__main__":

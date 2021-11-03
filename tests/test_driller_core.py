@@ -3,7 +3,7 @@ import sys
 import logging
 
 import angr
-import nose
+import unittest
 
 from common import bin_location
 from test_tracer import tracer_cgc
@@ -14,8 +14,8 @@ def test_cgc():
     simgr.use_technique(angr.exploration_techniques.DrillerCore(tracer._trace))
     simgr.run()
 
-    nose.tools.assert_true('diverted' in simgr.stashes)
-    nose.tools.assert_equal(len(simgr.diverted), 3)
+    unittest.TestCase().assertTrue('diverted' in simgr.stashes)
+    unittest.TestCase().assertEqual(len(simgr.diverted), 3)
 
 def test_simprocs():
     binary = os.path.join(bin_location, 'tests', 'i386', 'driller_simproc')
@@ -29,8 +29,8 @@ def test_simprocs():
     simgr.use_technique(d)
 
     simgr.run()
-    nose.tools.assert_in('diverted', simgr.stashes)
-    nose.tools.assert_greater(len(simgr.diverted), 0)
+    unittest.TestCase().assertIn('diverted', simgr.stashes)
+    unittest.TestCase().assertGreater(len(simgr.diverted), 0)
 
 
 def run_all():

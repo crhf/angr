@@ -3,7 +3,7 @@ import os
 import pickle
 import logging
 import sys
-import nose
+import unittest
 import angr
 
 from nose.plugins.attrib import attr
@@ -51,7 +51,7 @@ def run_fauxware(arch):
     p = angr.Project(os.path.join(test_location, arch, "fauxware"), auto_load_libs=False)
     results = p.factory.simulation_manager().explore(find=target_addrs[arch], avoid=avoid_addrs[arch])
     stdin = results.found[0].posix.dumps(0)
-    nose.tools.assert_equal(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00SOSNEAKY\x00', stdin)
+    unittest.TestCase().assertEqual(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00SOSNEAKY\x00', stdin)
 
     # test the divergence detection
     ancestor = results.found[0].history.closest_common_ancestor((results.avoid + results.active)[0].history)
@@ -70,7 +70,7 @@ def run_pickling(arch):
 
     pg.explore(find=target_addrs[arch], avoid=avoid_addrs[arch])
     stdin = pg.found[0].posix.dumps(0)
-    nose.tools.assert_equal(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00SOSNEAKY\x00', stdin)
+    unittest.TestCase().assertEqual(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00SOSNEAKY\x00', stdin)
 
 
 @attr(speed='slow')
@@ -85,15 +85,15 @@ def run_nodecode(arch):
     for i,c in enumerate(corrupt_addrs[arch][1]):
         p.loader.memory[corrupt_addrs[arch][0] + i] = c
     boned = p.factory.simulation_manager().explore(find=target_addrs[arch], avoid=avoid_addrs[arch])
-    nose.tools.assert_true(len(boned.errored) >= 1)
-    nose.tools.assert_true(isinstance(boned.errored[0].error, angr.SimIRSBNoDecodeError))
-    nose.tools.assert_true(boned.errored[0].state.addr == corrupt_addrs[arch][0])
+    unittest.TestCase().assertTrue(len(boned.errored) >= 1)
+    unittest.TestCase().assertTrue(isinstance(boned.errored[0].error, angr.SimIRSBNoDecodeError))
+    unittest.TestCase().assertTrue(boned.errored[0].state.addr == corrupt_addrs[arch][0])
 
     # hook the instructions with the emulated stuff
     p.hook(corrupt_addrs[arch][0], corrupt_addrs[arch][2], length=len(corrupt_addrs[arch][1]))
     results = p.factory.simulation_manager().explore(find=target_addrs[arch], avoid=avoid_addrs[arch])
     stdin = results.found[0].posix.dumps(0)
-    nose.tools.assert_equal(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00SOSNEAKY\x00', stdin)
+    unittest.TestCase().assertEqual(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00SOSNEAKY\x00', stdin)
 
 def run_merge(arch):
     p = angr.Project(os.path.join(test_location, arch, "fauxware"))

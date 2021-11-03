@@ -1,7 +1,7 @@
 
 import os
 
-import nose.tools
+import unittest
 
 import angr
 
@@ -27,7 +27,7 @@ def test_libc_x86():
     prop = p.analyses.Propagator(func=func, base_state=state)
     # import pprint
     # pprint.pprint(prop.replacements)
-    nose.tools.assert_greater(len(prop.replacements), 0)
+    unittest.TestCase().assertGreater(len(prop.replacements), 0)
 
 
 def test_lwip_udpecho_bm():
@@ -39,7 +39,7 @@ def test_lwip_udpecho_bm():
     state = p.factory.blank_state()
     prop = p.analyses.Propagator(func=func, base_state=state)
 
-    nose.tools.assert_greater(len(prop.replacements), 0)
+    unittest.TestCase().assertGreater(len(prop.replacements), 0)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-import nose
+import unittest
 import os
 import sys
 import angr
@@ -28,7 +28,7 @@ def test_ctype_b_loc():
     standard.
     '''
     if not sys.platform.startswith('linux'):
-        raise nose.SkipTest()
+        unittest.TestCase().skipTest()
 
     # Just load a binary so that we can do the initialization steps from
     # libc_start_main
@@ -53,7 +53,7 @@ def test_ctype_b_loc():
 
     # Check output of compiled C program that uses ctype_b_loc()
     output = subprocess.check_output(bin_path, shell=True)
-    nose.tools.assert_equal(result, output)
+    unittest.TestCase().assertEqual(result, output)
 
 
 def test_ctype_tolower_loc():
@@ -78,7 +78,7 @@ def test_ctype_tolower_loc():
     characters to be used for the ctype() family of functions (see <ctype.h>).
     '''
     if not sys.platform.startswith('linux'):
-        raise nose.SkipTest()
+        unittest.TestCase().skipTest()
 
     # Just load a binary so that we can do the initialization steps from
     # libc_start_main
@@ -103,7 +103,7 @@ def test_ctype_tolower_loc():
 
     # Check output of compiled C program that uses ctype_tolower_loc()
     output = subprocess.check_output(bin_path, shell=True)
-    nose.tools.assert_equal(result, output)
+    unittest.TestCase().assertEqual(result, output)
 
 
 def test_ctype_toupper_loc():
@@ -128,7 +128,7 @@ def test_ctype_toupper_loc():
     characters to be used for the ctype() family of functions (see <ctype.h>).
     '''
     if not sys.platform.startswith('linux'):
-        raise nose.SkipTest()
+        unittest.TestCase().skipTest()
 
     # Just load a binary so that we can do the initialization steps from
     # libc_start_main
@@ -153,7 +153,7 @@ def test_ctype_toupper_loc():
 
     # Check output of compiled C program that uses ctype_toupper_loc()
     output = subprocess.check_output(bin_path, shell=True)
-    nose.tools.assert_equal(result, output)
+    unittest.TestCase().assertEqual(result, output)
 
 
 if __name__ == '__main__':

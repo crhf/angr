@@ -2,7 +2,7 @@ import os
 import sys
 
 import angr
-import nose.tools
+import unittest
 
 test_location = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'binaries', 'tests')
 
@@ -25,59 +25,59 @@ def test_various_loops():
 
     simgr.run()
 
-    nose.tools.assert_equal(len(simgr.deadended), 10)
-    nose.tools.assert_equal(len(simgr.deadended[0].loop_data.back_edge_trip_counts), 14)
+    unittest.TestCase().assertEqual(len(simgr.deadended), 10)
+    unittest.TestCase().assertEqual(len(simgr.deadended[0].loop_data.back_edge_trip_counts), 14)
 
     for i, d in enumerate(simgr.deadended):
         f = p.kb.functions.function(name='symbolic_loop')
         l = p.analyses.LoopFinder(functions=[f]).loops[0]
-        nose.tools.assert_equal(d.loop_data.back_edge_trip_counts[l.entry.addr][0], i)
+        unittest.TestCase().assertEqual(d.loop_data.back_edge_trip_counts[l.entry.addr][0], i)
 
         f = p.kb.functions.function(name='for_loop')
         l = p.analyses.LoopFinder(functions=[f]).loops[0]
-        nose.tools.assert_equal(d.loop_data.back_edge_trip_counts[l.entry.addr][0], 9)
+        unittest.TestCase().assertEqual(d.loop_data.back_edge_trip_counts[l.entry.addr][0], 9)
 
         f = p.kb.functions.function(name='while_loop')
         l = p.analyses.LoopFinder(functions=[f]).loops[0]
-        nose.tools.assert_equal(d.loop_data.back_edge_trip_counts[l.entry.addr][0], 9)
+        unittest.TestCase().assertEqual(d.loop_data.back_edge_trip_counts[l.entry.addr][0], 9)
 
         f = p.kb.functions.function(name='do_while_loop')
         l = p.analyses.LoopFinder(functions=[f]).loops[0]
-        nose.tools.assert_equal(d.loop_data.header_trip_counts[l.entry.addr][0], 9)
+        unittest.TestCase().assertEqual(d.loop_data.header_trip_counts[l.entry.addr][0], 9)
 
         f = p.kb.functions.function(name='nullify')
         l = p.analyses.LoopFinder(functions=[f]).loops[0]
-        nose.tools.assert_equal(len(d.loop_data.back_edge_trip_counts[l.entry.addr]), 8)
-        nose.tools.assert_equal(d.loop_data.back_edge_trip_counts[l.entry.addr][0], 9)
+        unittest.TestCase().assertEqual(len(d.loop_data.back_edge_trip_counts[l.entry.addr]), 8)
+        unittest.TestCase().assertEqual(d.loop_data.back_edge_trip_counts[l.entry.addr][0], 9)
 
         f = p.kb.functions.function(name='nested_for_loop')
         ol = p.analyses.LoopFinder(functions=[f]).loops[0]
         il = ol.subloops[0]
-        nose.tools.assert_equal(d.loop_data.back_edge_trip_counts[ol.entry.addr][0], 3)
-        nose.tools.assert_equal(len(d.loop_data.back_edge_trip_counts[il.entry.addr]), 3)
-        nose.tools.assert_true(all(s == 3 for s in d.loop_data.back_edge_trip_counts[il.entry.addr]))
+        unittest.TestCase().assertEqual(d.loop_data.back_edge_trip_counts[ol.entry.addr][0], 3)
+        unittest.TestCase().assertEqual(len(d.loop_data.back_edge_trip_counts[il.entry.addr]), 3)
+        unittest.TestCase().assertTrue(all(s == 3 for s in d.loop_data.back_edge_trip_counts[il.entry.addr]))
 
         f = p.kb.functions.function(name='nested_while_loop')
         ol = p.analyses.LoopFinder(functions=[f]).loops[0]
         il = ol.subloops[0]
-        nose.tools.assert_equal(d.loop_data.back_edge_trip_counts[ol.entry.addr][0], 3)
-        nose.tools.assert_equal(len(d.loop_data.back_edge_trip_counts[il.entry.addr]), 3)
-        nose.tools.assert_true(all(s == 3 for s in d.loop_data.back_edge_trip_counts[il.entry.addr]))
+        unittest.TestCase().assertEqual(d.loop_data.back_edge_trip_counts[ol.entry.addr][0], 3)
+        unittest.TestCase().assertEqual(len(d.loop_data.back_edge_trip_counts[il.entry.addr]), 3)
+        unittest.TestCase().assertTrue(all(s == 3 for s in d.loop_data.back_edge_trip_counts[il.entry.addr]))
 
         f = p.kb.functions.function(name='nested_do_while_loop')
         ol = p.analyses.LoopFinder(functions=[f]).loops[0]
         il = ol.subloops[0]
-        nose.tools.assert_equal(d.loop_data.header_trip_counts[ol.entry.addr][0], 3)
-        nose.tools.assert_equal(len(d.loop_data.header_trip_counts[il.entry.addr]), 3)
-        nose.tools.assert_true(all(s == 3 for s in d.loop_data.header_trip_counts[il.entry.addr]))
+        unittest.TestCase().assertEqual(d.loop_data.header_trip_counts[ol.entry.addr][0], 3)
+        unittest.TestCase().assertEqual(len(d.loop_data.header_trip_counts[il.entry.addr]), 3)
+        unittest.TestCase().assertTrue(all(s == 3 for s in d.loop_data.header_trip_counts[il.entry.addr]))
 
         f = p.kb.functions.function(name='break_for_loop')
         l = p.analyses.LoopFinder(functions=[f]).loops[0]
-        nose.tools.assert_equal(d.loop_data.back_edge_trip_counts[l.entry.addr][0], 9)
+        unittest.TestCase().assertEqual(d.loop_data.back_edge_trip_counts[l.entry.addr][0], 9)
 
         f = p.kb.functions.function(name='break_do_while_loop')
         l = p.analyses.LoopFinder(functions=[f]).loops[0]
-        nose.tools.assert_equal(d.loop_data.header_trip_counts[l.entry.addr][0], 9)
+        unittest.TestCase().assertEqual(d.loop_data.header_trip_counts[l.entry.addr][0], 9)
 
 
 def test_loops_with_invalid_parameter():
@@ -91,11 +91,11 @@ def test_loops_with_invalid_parameter():
 
     simgr.run()
 
-    nose.tools.assert_equal(len(simgr.deadended[0].loop_data.back_edge_trip_counts), 3)
-    nose.tools.assert_equal(simgr.deadended[0].loop_data.back_edge_trip_counts[0x400665][0], 10)
-    nose.tools.assert_equal(len(simgr.deadended[0].loop_data.back_edge_trip_counts[0x400665]), 10)
-    nose.tools.assert_equal(simgr.deadended[0].loop_data.back_edge_trip_counts[0x400675][0], 10)
-    nose.tools.assert_equal(simgr.deadended[0].loop_data.back_edge_trip_counts[0x4006b2][0], 100)
+    unittest.TestCase().assertEqual(len(simgr.deadended[0].loop_data.back_edge_trip_counts), 3)
+    unittest.TestCase().assertEqual(simgr.deadended[0].loop_data.back_edge_trip_counts[0x400665][0], 10)
+    unittest.TestCase().assertEqual(len(simgr.deadended[0].loop_data.back_edge_trip_counts[0x400665]), 10)
+    unittest.TestCase().assertEqual(simgr.deadended[0].loop_data.back_edge_trip_counts[0x400675][0], 10)
+    unittest.TestCase().assertEqual(simgr.deadended[0].loop_data.back_edge_trip_counts[0x4006b2][0], 100)
 
 
 def test_arrays():
@@ -111,9 +111,9 @@ def test_arrays():
 
     simgr.run()
 
-    nose.tools.assert_equal(len(simgr.deadended[0].loop_data.back_edge_trip_counts), 2)
-    nose.tools.assert_equal(simgr.deadended[0].loop_data.back_edge_trip_counts[0x400636][0], 26)
-    nose.tools.assert_equal(simgr.deadended[0].loop_data.back_edge_trip_counts[0x4005fd][0], 26)
+    unittest.TestCase().assertEqual(len(simgr.deadended[0].loop_data.back_edge_trip_counts), 2)
+    unittest.TestCase().assertEqual(simgr.deadended[0].loop_data.back_edge_trip_counts[0x400636][0], 26)
+    unittest.TestCase().assertEqual(simgr.deadended[0].loop_data.back_edge_trip_counts[0x4005fd][0], 26)
 
 
 def test_loop_limiter():
@@ -129,8 +129,8 @@ def test_loop_limiter():
 
     simgr.run()
 
-    nose.tools.assert_true('spinning' in simgr.stashes)
-    nose.tools.assert_equal(simgr.spinning[0].loop_data.back_edge_trip_counts[0x4005fd][0], 6)
+    unittest.TestCase().assertTrue('spinning' in simgr.stashes)
+    unittest.TestCase().assertEqual(simgr.spinning[0].loop_data.back_edge_trip_counts[0x4005fd][0], 6)
 
 
 def test_loop_limiter_constant_loop():
@@ -144,9 +144,9 @@ def test_loop_limiter_constant_loop():
     simgr.use_technique(angr.exploration_techniques.LoopSeer(cfg=cfg, functions='main', bound=5, limit_concrete_loops=False))
 
     simgr.run()
-    nose.tools.assert_true(simgr.deadended[0].regs.eax.concrete)
+    unittest.TestCase().assertTrue(simgr.deadended[0].regs.eax.concrete)
     val = simgr.deadended[0].solver.eval_one(simgr.deadended[0].regs.eax)
-    nose.tools.assert_equal(val, 420)
+    unittest.TestCase().assertEqual(val, 420)
 
 
 if __name__ == "__main__":

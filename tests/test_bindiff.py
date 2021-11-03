@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr
 
 import logging
@@ -19,22 +19,22 @@ def test_bindiff_x86_64():
     differing_functions = bindiff.differing_functions
     unmatched_functions = bindiff.unmatched_functions
     # check identical functions
-    nose.tools.assert_in((0x40064c, 0x40066a), identical_functions)
+    unittest.TestCase().assertIn((0x40064c, 0x40066a), identical_functions)
     # check differing functions
-    nose.tools.assert_in((0x400616, 0x400616), differing_functions)
+    unittest.TestCase().assertIn((0x400616, 0x400616), differing_functions)
     # check unmatched functions
-    nose.tools.assert_less_equal(len(unmatched_functions[0]), 1)
-    nose.tools.assert_less_equal(len(unmatched_functions[1]), 2)
+    unittest.TestCase().assertLessEqual(len(unmatched_functions[0]), 1)
+    unittest.TestCase().assertLessEqual(len(unmatched_functions[1]), 2)
     # check for no major regressions
-    nose.tools.assert_greater(len(identical_functions), len(differing_functions))
-    nose.tools.assert_less(len(differing_functions), 4)
+    unittest.TestCase().assertGreater(len(identical_functions), len(differing_functions))
+    unittest.TestCase().assertLess(len(differing_functions), 4)
 
     # check a function diff
     fdiff = bindiff.get_function_diff(0x400616, 0x400616)
     block_matches = { (a.addr, b.addr) for a, b in fdiff.block_matches }
-    nose.tools.assert_in((0x40064a, 0x400668), block_matches)
-    nose.tools.assert_in((0x400616, 0x400616), block_matches)
-    nose.tools.assert_in((0x40061e, 0x40061e), block_matches)
+    unittest.TestCase().assertIn((0x40064a, 0x400668), block_matches)
+    unittest.TestCase().assertIn((0x400616, 0x400616), block_matches)
+    unittest.TestCase().assertIn((0x40061e, 0x40061e), block_matches)
 
 def run_all():
     functions = globals()

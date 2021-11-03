@@ -7,7 +7,7 @@ import sys
 
 l = logging.getLogger("angr.tests.test_ddg")
 
-import nose
+import unittest
 import angr
 
 # Load the tests
@@ -28,7 +28,7 @@ def perform_one(binary_path):
 
     ddg = proj.analyses.DDG(cfg, start=cfg.functions['main'].addr)
     # There should be at least 400 nodes
-    nose.tools.assert_true(len(ddg.graph) >= 400)
+    unittest.TestCase().assertTrue(len(ddg.graph) >= 400)
 
     from angr.code_location import CodeLocation
 
@@ -58,14 +58,14 @@ def perform_one(binary_path):
     # Where the data comes from
     data_src_0 = CodeLocation(0x40064c, 26)
     data_src_1 = CodeLocation(0x400667, 19)
-    nose.tools.assert_equal(len(in_edges), 3)
-    nose.tools.assert_in(
+    unittest.TestCase().assertEqual(len(in_edges), 3)
+    unittest.TestCase().assertIn(
         (data_src_0, cl1), [ (src, dst) for src, dst, _ in in_edges ]
     )
-    nose.tools.assert_in(
+    unittest.TestCase().assertIn(
         (data_src_1, cl1), [ (src, dst) for src, dst, _ in in_edges ]
     )
-    nose.tools.assert_in(
+    unittest.TestCase().assertIn(
         (memaddr_src, cl1, {'data': 14, 'type': 'tmp', 'subtype': ('mem_addr', )}), in_edges
     )
 

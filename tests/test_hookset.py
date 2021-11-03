@@ -1,5 +1,5 @@
 import angr
-import nose
+import unittest
 
 
 def test_hookset():
@@ -30,24 +30,24 @@ def test_hookset():
             return ['coward']
 
     foo = Foo()
-    nose.tools.assert_equal(foo.run(), ['foo'])
+    unittest.TestCase().assertEqual(foo.run(), ['foo'])
 
     bar = Bar()
     baz = Baz()
     foo.install_hooks(bar)
     foo.install_hooks(baz)
-    nose.tools.assert_equal(foo.run(), ['baz', 'bar', 'foo'])
+    unittest.TestCase().assertEqual(foo.run(), ['baz', 'bar', 'foo'])
 
     foo.remove_hooks(bar)
     foo.remove_hooks(baz)
-    nose.tools.assert_equal(foo.run(), ['foo'])
+    unittest.TestCase().assertEqual(foo.run(), ['foo'])
 
     coward = Coward()
     foo.install_hooks(coward)
-    nose.tools.assert_equal(foo.run(), ['coward'])
+    unittest.TestCase().assertEqual(foo.run(), ['coward'])
 
     foo.remove_hooks(coward)
-    nose.tools.assert_equal(foo.run(), ['foo'])
+    unittest.TestCase().assertEqual(foo.run(), ['foo'])
 
 
 if __name__ == '__main__':

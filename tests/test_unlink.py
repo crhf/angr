@@ -1,5 +1,5 @@
 import angr
-import nose
+import unittest
 
 def test_file_unlink():
     # Initialize a blank state with an arbitrary errno location
@@ -12,7 +12,7 @@ def test_file_unlink():
     state.posix.close(fd)
 
     # Ensure 'test' was in fact created
-    nose.tools.assert_in(b'/test', state.fs._files)
+    unittest.TestCase().assertIn(b'/test', state.fs._files)
 
     # Store the filename in memory
     path_addr = 0xb0000000
@@ -22,15 +22,15 @@ def test_file_unlink():
     unlink = angr.SIM_PROCEDURES['posix']['unlink']()
     state.scratch.sim_procedure = unlink
     rval = unlink.execute(state, arguments=[path_addr]).ret_expr
-    nose.tools.assert_equal(rval, 0)
-    nose.tools.assert_equal(state.solver.eval(state.libc.errno), 0)
+    unittest.TestCase().assertEqual(rval, 0)
+    unittest.TestCase().assertEqual(state.solver.eval(state.libc.errno), 0)
 
     # Check that 'test' was in fact deleted
-    nose.tools.assert_equal(state.fs._files, {})
+    unittest.TestCase().assertEqual(state.fs._files, {})
 
     # Unlink again: should return -1 and set ERRNO to ENOENT
     unlink = angr.SIM_PROCEDURES['posix']['unlink']()
     state.scratch.sim_procedure = unlink
     rval = unlink.execute(state, arguments=[path_addr]).ret_expr
-    nose.tools.assert_equal(rval, -1)
-    nose.tools.assert_equal(state.solver.eval(state.libc.errno), state.posix.ENOENT)
+    unittest.TestCase().assertEqual(rval, -1)
+    unittest.TestCase().assertEqual(state.solver.eval(state.libc.errno), state.posix.ENOENT)

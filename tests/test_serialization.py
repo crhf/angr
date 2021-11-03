@@ -1,7 +1,7 @@
 import tempfile
 import pickle
 import shutil
-import nose
+import unittest
 import angr
 import os
 
@@ -14,8 +14,8 @@ def internaltest_vfg(p, cfg):
     v = angr.vaults.VaultDict()
     state = v.dumps(vfg)
     vfg2 = v.loads(state)
-    nose.tools.assert_equal(vfg.final_states, vfg2.final_states)
-    nose.tools.assert_equal(set(vfg.graph.nodes()), set(vfg2.graph.nodes()))
+    unittest.TestCase().assertEqual(vfg.final_states, vfg2.final_states)
+    unittest.TestCase().assertEqual(set(vfg.graph.nodes()), set(vfg2.graph.nodes()))
 
 def internaltest_cfg(p):
     state = tempfile.TemporaryFile()
@@ -25,9 +25,9 @@ def internaltest_cfg(p):
 
     state.seek(0)
     cfg2 = pickle.load(state)
-    nose.tools.assert_equal(set(cfg.model.nodes()), set(cfg2.model.nodes()))
-    nose.tools.assert_equal(cfg.unresolvables, cfg2.unresolvables)
-    nose.tools.assert_set_equal(set(cfg.deadends), set(cfg2.deadends))
+    unittest.TestCase().assertEqual(set(cfg.model.nodes()), set(cfg2.model.nodes()))
+    unittest.TestCase().assertEqual(cfg.unresolvables, cfg2.unresolvables)
+    unittest.TestCase().assertSetEqual(set(cfg.deadends), set(cfg2.deadends))
 
     return cfg
 
@@ -45,7 +45,7 @@ def internaltest_cfgfast(p):
 
     state.seek(0)
     cfg2 = pickle.load(state)
-    nose.tools.assert_equal(set(cfg.model.nodes()), set(cfg2.model.nodes()))
+    unittest.TestCase().assertEqual(set(cfg.model.nodes()), set(cfg2.model.nodes()))
 
 def internaltest_project(fpath):
     tpath = tempfile.mktemp()

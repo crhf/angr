@@ -1,4 +1,4 @@
-import nose
+import unittest
 import os
 import unittest
 
@@ -28,28 +28,28 @@ class TestFunctionManager(unittest.TestCase):
                                       None }
 
         cfg = self.project.analyses.CFGEmulated()  # pylint:disable=unused-variable
-        nose.tools.assert_equal(
+        unittest.TestCase().assertEqual(
             { k for k in self.project.kb.functions.keys() if k < 0x500000 },
             expected_functions
         )
 
         main = self.project.kb.functions.function(name='main')
-        nose.tools.assert_equal(main.startpoint.addr, 0x40071D)
-        nose.tools.assert_equal(set(main.block_addrs), expected_blocks)
-        nose.tools.assert_equal([0x4007D3], [bl.addr for bl in main.endpoints])
-        nose.tools.assert_equal(set(main.get_call_sites()), expected_callsites)
-        nose.tools.assert_equal(
+        unittest.TestCase().assertEqual(main.startpoint.addr, 0x40071D)
+        unittest.TestCase().assertEqual(set(main.block_addrs), expected_blocks)
+        unittest.TestCase().assertEqual([0x4007D3], [bl.addr for bl in main.endpoints])
+        unittest.TestCase().assertEqual(set(main.get_call_sites()), expected_callsites)
+        unittest.TestCase().assertEqual(
             set(map(main.get_call_target, main.get_call_sites())),
             expected_callsite_targets
         )
-        nose.tools.assert_equal(
+        unittest.TestCase().assertEqual(
             set(map(main.get_call_return, main.get_call_sites())),
             expected_callsite_returns
         )
-        nose.tools.assert_true(main.has_return)
+        unittest.TestCase().assertTrue(main.has_return)
 
         rejected = self.project.kb.functions.function(name='rejected')
-        nose.tools.assert_equal(rejected.returning, False)
+        unittest.TestCase().assertEqual(rejected.returning, False)
 
         # transition graph
         main_g = main.transition_graph
@@ -71,13 +71,13 @@ class TestFunctionManager(unittest.TestCase):
             (0x4007c9, 0x4007d3, {'type': 'fake_return', 'outside': False}),
         ]
         for edge in edges:
-            nose.tools.assert_true(edge in main_g_edges)
+            unittest.TestCase().assertTrue(edge in main_g_edges)
 
         # These tests fail for reasons of fastpath, probably
-        #nose.tools.assert_true(main.bp_on_stack)
-        #nose.tools.assert_equal(main.name, 'main')
-        #nose.tools.assert_true(main.retaddr_on_stack)
-        #nose.tools.assert_equal(0x50, main.sp_difference)
+        #unittest.TestCase().assertTrue(main.bp_on_stack)
+        #unittest.TestCase().assertEqual(main.name, 'main')
+        #unittest.TestCase().assertTrue(main.retaddr_on_stack)
+        #unittest.TestCase().assertEqual(0x50, main.sp_difference)
 
         # TODO: Check the result returned
         #func_man.dbg_draw()
@@ -86,5 +86,5 @@ class TestFunctionManager(unittest.TestCase):
         self.project.arch = ArchAMD64()
 
         self.project.kb.functions._add_call_to(0x400000, 0x400410, 0x400420, 0x400414)
-        nose.tools.assert_in(0x400000, self.project.kb.functions.keys())
-        nose.tools.assert_in(0x400420, self.project.kb.functions.keys())
+        unittest.TestCase().assertIn(0x400000, self.project.kb.functions.keys())
+        unittest.TestCase().assertIn(0x400420, self.project.kb.functions.keys())

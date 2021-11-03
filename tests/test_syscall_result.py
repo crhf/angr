@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr
 
 import logging

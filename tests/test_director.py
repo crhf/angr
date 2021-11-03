@@ -3,7 +3,7 @@ import os
 import sys
 import logging
 
-import nose.tools
+import unittest
 
 import angr
 from angr.sim_type import SimTypePointer, SimTypeChar
@@ -24,7 +24,7 @@ def test_execute_address_brancher():
 
     pg.explore(find=(0x4005b4,))
 
-    nose.tools.assert_greater(len(pg.deprioritized), 0)
+    unittest.TestCase().assertGreater(len(pg.deprioritized), 0)
 
 def test_call_function_brancher():
 
@@ -52,10 +52,10 @@ def test_call_function_brancher():
 
     pg.explore(find=(0x40059e,))
 
-    nose.tools.assert_greater(len(pg.deprioritized), 0)
-    nose.tools.assert_greater(len(pg.found), 0)
-    nose.tools.assert_is_not(NonLocal.the_state, None)
-    nose.tools.assert_is(NonLocal.the_goal, goal)
+    unittest.TestCase().assertGreater(len(pg.deprioritized), 0)
+    unittest.TestCase().assertGreater(len(pg.found), 0)
+    unittest.TestCase().assertIs_not(NonLocal.the_state, None)
+    unittest.TestCase().assertIs(NonLocal.the_goal, goal)
 
 if __name__ == "__main__":
 

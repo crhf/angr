@@ -1,5 +1,5 @@
 import os
-import nose
+import unittest
 import angr
 
 location = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'binaries', 'tests')
@@ -25,10 +25,10 @@ def run_stochastic(binary, arch):
     def found(simgr):
         return simgr.active[0].addr == find[binary][arch]
     simgr.run(until=found)
-    nose.tools.assert_equal(simgr.active[0].addr, find[binary][arch])
+    unittest.TestCase().assertEqual(simgr.active[0].addr, find[binary][arch])
 
     input_found = simgr.active[0].posix.dumps(0)
-    nose.tools.assert_true(criteria[binary](input_found))
+    unittest.TestCase().assertTrue(criteria[binary](input_found))
 
 def test_stochastic():
     for binary in find:

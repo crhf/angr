@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr
 import pickle
 import re
@@ -19,7 +19,7 @@ def _remove_addr_from_trace_item(trace_item_str):
 
 def _compare_trace(trace, expected):
 
-    nose.tools.assert_equal(len(trace), len(expected))
+    unittest.TestCase().assertEqual(len(trace), len(expected))
 
     for trace_item, expected_str in zip(trace, expected):
         trace_item_str = str(trace_item)
@@ -28,7 +28,7 @@ def _compare_trace(trace, expected):
             trace_item_str = _remove_addr_from_trace_item(trace_item_str)
             expected_str = _remove_addr_from_trace_item(expected_str)
 
-        nose.tools.assert_equal(trace_item_str, expected_str)
+        unittest.TestCase().assertEqual(trace_item_str, expected_str)
 
 def test_stops():
     p = angr.Project(os.path.join(test_location, 'binaries', 'tests', 'i386', 'uc_stop'))
@@ -43,7 +43,7 @@ def test_stops():
     s_normal_angr = p.factory.entry_state(args=['a'])
     pg_normal_angr = p.factory.simulation_manager(s_normal_angr).run()
     p_normal_angr = pg_normal_angr.one_deadended
-    nose.tools.assert_equal(p_normal_angr.history.bbl_addrs.hardcopy, p_normal.history.bbl_addrs.hardcopy)
+    unittest.TestCase().assertEqual(p_normal_angr.history.bbl_addrs.hardcopy, p_normal.history.bbl_addrs.hardcopy)
 
     # test STOP_STOPPOINT on an address that is not a basic block start
     s_stoppoints = p.factory.call_state(p.loader.find_symbol("main").rebased_addr, 1, [], add_options=so.unicorn)
@@ -56,9 +56,9 @@ def test_stops():
     stop_in_bb = 0x08048638
     stop_bb = 0x08048633 # basic block of the above address
     pg_stoppoints = p.factory.simulation_manager(s_stoppoints).run(n=1, extra_stop_points=stop_fake + [stop_in_bb])
-    nose.tools.assert_equal(len(pg_stoppoints.active), 1) # path should not branch
+    unittest.TestCase().assertEqual(len(pg_stoppoints.active), 1) # path should not branch
     p_stoppoints = pg_stoppoints.one_active
-    nose.tools.assert_equal(p_stoppoints.addr, stop_bb) # should stop at bb before stop_in_bb
+    unittest.TestCase().assertEqual(p_stoppoints.addr, stop_bb) # should stop at bb before stop_in_bb
     _compare_trace(p_stoppoints.history.descriptions, ['<Unicorn (STOP_STOPPOINT after 111 steps) from 0x80485b5: 1 sat>'])
 
     # test STOP_SYMBOLIC_READ_SYMBOLIC_TRACKING_DISABLED
@@ -70,7 +70,7 @@ def test_stops():
     s_symbolic_read_tracking_disabled_angr = p.factory.entry_state(args=['a', 'a'])
     pg_symbolic_read_tracking_disabled_angr = p.factory.simulation_manager(s_symbolic_read_tracking_disabled_angr).run()
     p_symbolic_read_tracking_disabled_angr = pg_symbolic_read_tracking_disabled_angr.one_deadended
-    nose.tools.assert_equal(p_symbolic_read_tracking_disabled_angr.history.bbl_addrs.hardcopy, p_symbolic_read_tracking_disabled.history.bbl_addrs.hardcopy)
+    unittest.TestCase().assertEqual(p_symbolic_read_tracking_disabled_angr.history.bbl_addrs.hardcopy, p_symbolic_read_tracking_disabled.history.bbl_addrs.hardcopy)
 
     # test STOP_SEGFAULT
     s_segfault = p.factory.entry_state(args=['a', 'a', 'a', 'a', 'a', 'a', 'a'], add_options=so.unicorn | {so.STRICT_PAGE_ACCESS, so.ENABLE_NX})
@@ -83,8 +83,8 @@ def test_stops():
     s_segfault_angr = p.factory.entry_state(args=['a', 'a', 'a', 'a', 'a', 'a', 'a'], add_options={so.STRICT_PAGE_ACCESS, so.ENABLE_NX})
     pg_segfault_angr = p.factory.simulation_manager(s_segfault_angr).run()
     p_segfault_angr = pg_segfault_angr.errored[0].state
-    nose.tools.assert_equal(p_segfault_angr.history.bbl_addrs.hardcopy, p_segfault.history.bbl_addrs.hardcopy)
-    nose.tools.assert_equal(pg_segfault_angr.errored[0].error.addr, pg_segfault.errored[0].error.addr)
+    unittest.TestCase().assertEqual(p_segfault_angr.history.bbl_addrs.hardcopy, p_segfault.history.bbl_addrs.hardcopy)
+    unittest.TestCase().assertEqual(pg_segfault_angr.errored[0].error.addr, pg_segfault.errored[0].error.addr)
 
     # test STOP_SYMBOLIC_BLOCK_EXIT
     s_symbolic_exit = p.factory.entry_state(args=['a'] * 10, add_options=so.unicorn)
@@ -95,7 +95,7 @@ def test_stops():
     s_symbolic_exit_angr = p.factory.entry_state(args=['a'] * 10)
     pg_symbolic_exit_angr = p.factory.simulation_manager(s_symbolic_exit_angr).run()
     p_symbolic_exit_angr = pg_symbolic_exit_angr.one_deadended
-    nose.tools.assert_equal(p_symbolic_exit_angr.history.bbl_addrs.hardcopy, p_symbolic_exit.history.bbl_addrs.hardcopy)
+    unittest.TestCase().assertEqual(p_symbolic_exit_angr.history.bbl_addrs.hardcopy, p_symbolic_exit.history.bbl_addrs.hardcopy)
 
 def run_longinit(arch):
     p = angr.Project(os.path.join(test_location, 'binaries', 'tests', arch, 'longinit'))
@@ -106,7 +106,7 @@ def run_longinit(arch):
     (first, _), (second, _) = s.posix.stdin.content
     s.add_constraints(first == s.solver.BVV(b'A'*9))
     s.add_constraints(second == s.solver.BVV(b'B'*9))
-    nose.tools.assert_equal(s.posix.dumps(1), b"You entered AAAAAAAAA and BBBBBBBBB!\n")
+    unittest.TestCase().assertEqual(s.posix.dumps(1), b"You entered AAAAAAAAA and BBBBBBBBB!\n")
 
 def test_longinit_i386():
     run_longinit('i386')
@@ -119,7 +119,7 @@ def broken_fauxware_arm():
     pg = p.factory.simulation_manager(s_unicorn)
     pg.explore()
     assert all("Unicorn" in ''.join(p.history.descriptions.hardcopy) for p in pg.deadended)
-    nose.tools.assert_equal(sorted(pg.mp_deadended.posix.dumps(1).mp_items), sorted((
+    unittest.TestCase().assertEqual(sorted(pg.mp_deadended.posix.dumps(1).mp_items), sorted((
         b'Username: \nPassword: \nWelcome to the admin console, trusted user!\n',
         b'Username: \nPassword: \nGo away!',
         b'Username: \nPassword: \nWelcome to the admin console, trusted user!\n'
@@ -133,7 +133,7 @@ def test_fauxware():
     pg.explore()
 
     assert all("Unicorn" in ''.join(p.history.descriptions.hardcopy) for p in pg.deadended)
-    nose.tools.assert_equal(sorted(pg.mp_deadended.posix.dumps(1).mp_items), sorted((
+    unittest.TestCase().assertEqual(sorted(pg.mp_deadended.posix.dumps(1).mp_items), sorted((
         b'Username: \nPassword: \nWelcome to the admin console, trusted user!\n',
         b'Username: \nPassword: \nGo away!',
         b'Username: \nPassword: \nWelcome to the admin console, trusted user!\n'
@@ -152,7 +152,7 @@ def test_fauxware_aggressive():
     pg = p.factory.simulation_manager(s_unicorn)
     pg.explore()
 
-    nose.tools.assert_equal(len(pg.deadended), 1)
+    unittest.TestCase().assertEqual(len(pg.deadended), 1)
 
 def run_similarity(binpath, depth, prehook=None):
     b = angr.Project(os.path.join(test_location, binpath))
@@ -188,9 +188,9 @@ def test_fp():
         my_callable = p.factory.callable(addr, cc=cc)
         my_callable.set_base_state(p.factory.blank_state(add_options=so.unicorn))
         result = my_callable(*args)
-        nose.tools.assert_false(result.symbolic)
+        unittest.TestCase().assertFalse(result.symbolic)
         result_concrete = result.args[0]
-        nose.tools.assert_equal(answer, result_concrete)
+        unittest.TestCase().assertEqual(answer, result_concrete)
 
 def test_unicorn_pickle():
     p = angr.Project(os.path.join(test_location, 'binaries', 'tests', 'i386', 'fauxware'))
@@ -215,7 +215,7 @@ def test_unicorn_pickle():
     pg2 = pickle.loads(pgp)
     pg2.explore()
 
-    nose.tools.assert_equal(sorted(pg2.mp_deadended.posix.dumps(1).mp_items), sorted((
+    unittest.TestCase().assertEqual(sorted(pg2.mp_deadended.posix.dumps(1).mp_items), sorted((
         b'Username: \nPassword: \nWelcome to the admin console, trusted user!\n',
         b'Username: \nPassword: \nGo away!',
         b'Username: \nPassword: \nWelcome to the admin console, trusted user!\n'
@@ -233,7 +233,7 @@ def test_unicorn_pickle():
     pg2 = pickle.loads(pgp)
     pg2.explore()
 
-    nose.tools.assert_equal(sorted(pg2.mp_deadended.posix.dumps(1).mp_items), sorted((
+    unittest.TestCase().assertEqual(sorted(pg2.mp_deadended.posix.dumps(1).mp_items), sorted((
         b'Username: \nPassword: \nWelcome to the admin console, trusted user!\n',
         b'Username: \nPassword: \nGo away!',
         b'Username: \nPassword: \nWelcome to the admin console, trusted user!\n'
@@ -247,7 +247,7 @@ def test_concrete_transmits():
     pg_unicorn = p.factory.simulation_manager(s_unicorn)
     pg_unicorn.run(n=10)
 
-    nose.tools.assert_equal(pg_unicorn.one_active.posix.dumps(1), b'1) Add number to the array\n2) Add random number to the array\n3) Sum numbers\n4) Exit\nRandomness added\n1) Add number to the array\n2) Add random number to the array\n3) Sum numbers\n4) Exit\n  Index: \n1) Add number to the array\n2) Add random number to the array\n3) Sum numbers\n4) Exit\n')
+    unittest.TestCase().assertEqual(pg_unicorn.one_active.posix.dumps(1), b'1) Add number to the array\n2) Add random number to the array\n3) Sum numbers\n4) Exit\nRandomness added\n1) Add number to the array\n2) Add random number to the array\n3) Sum numbers\n4) Exit\n  Index: \n1) Add number to the array\n2) Add random number to the array\n3) Sum numbers\n4) Exit\n')
 
 def test_inspect():
     p = angr.Project(os.path.join(test_location, 'binaries', 'tests', 'i386', 'uc_stop'))
@@ -276,11 +276,11 @@ def test_inspect():
 
     pg_instruction = p.factory.simulation_manager(s_break_addr)
     pg_instruction.run()
-    nose.tools.assert_equal(hits[addr0], 1)
-    nose.tools.assert_equal(hits[addr1], 1)
-    nose.tools.assert_equal(hits[addr2], 1)
-    nose.tools.assert_equal(hits[addr3], 0)
-    nose.tools.assert_equal(hits[addr4], 0)
+    unittest.TestCase().assertEqual(hits[addr0], 1)
+    unittest.TestCase().assertEqual(hits[addr1], 1)
+    unittest.TestCase().assertEqual(hits[addr2], 1)
+    unittest.TestCase().assertEqual(hits[addr3], 0)
+    unittest.TestCase().assertEqual(hits[addr4], 0)
 
     # test breaking on every instruction
     def collect_trace(options):
@@ -291,7 +291,7 @@ def test_inspect():
         s_break_every.inspect.b("instruction", action=action_every)
         pg_break_every = p.factory.simulation_manager(s_break_every)
         pg_break_every.run()
-    nose.tools.assert_equal(collect_trace(so.unicorn), collect_trace(set()))
+    unittest.TestCase().assertEqual(collect_trace(so.unicorn), collect_trace(set()))
 
 def test_explore():
     p = angr.Project(os.path.join(test_location, 'binaries', 'tests', 'i386', 'uc_stop'))
@@ -305,13 +305,13 @@ def test_explore():
     s_explore = main_state(1)
     pg_explore_find = p.factory.simulation_manager(s_explore)
     pg_explore_find.explore(find=addr)
-    nose.tools.assert_equal(len(pg_explore_find.found), 1)
-    nose.tools.assert_equal(pg_explore_find.found[0].addr, addr)
+    unittest.TestCase().assertEqual(len(pg_explore_find.found), 1)
+    unittest.TestCase().assertEqual(pg_explore_find.found[0].addr, addr)
 
     pg_explore_avoid = p.factory.simulation_manager(s_explore)
     pg_explore_avoid.explore(avoid=addr)
-    nose.tools.assert_equal(len(pg_explore_avoid.avoid), 1)
-    nose.tools.assert_equal(pg_explore_avoid.avoid[0].addr, addr)
+    unittest.TestCase().assertEqual(len(pg_explore_avoid.avoid), 1)
+    unittest.TestCase().assertEqual(pg_explore_avoid.avoid[0].addr, addr)
 
 
 def test_single_step():
@@ -327,13 +327,13 @@ def test_single_step():
 
     step1 = s_main.block().instruction_addrs[1]
     successors1 = s_main.step(num_inst=1).successors
-    nose.tools.assert_equal(len(successors1), 1)
-    nose.tools.assert_equal(successors1[0].addr, step1)
+    unittest.TestCase().assertEqual(len(successors1), 1)
+    unittest.TestCase().assertEqual(successors1[0].addr, step1)
 
     step5 = s_main.block().instruction_addrs[5]
     successors2 = successors1[0].step(num_inst=4).successors
-    nose.tools.assert_equal(len(successors2), 1)
-    nose.tools.assert_equal(successors2[0].addr, step5)
+    unittest.TestCase().assertEqual(len(successors2), 1)
+    unittest.TestCase().assertEqual(successors2[0].addr, step5)
 
 if __name__ == '__main__':
     import logging

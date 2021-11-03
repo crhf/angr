@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr
 
 import logging
@@ -13,22 +13,22 @@ def test_sprintf():
     state = a.found[0]
 
     str1 = state.solver.eval(state.memory.load(0x600ad0, 13), cast_to=bytes)
-    nose.tools.assert_equal(str1, b'Immediate: 3\n')
+    unittest.TestCase().assertEqual(str1, b'Immediate: 3\n')
 
     str2 = state.solver.eval(state.memory.load(0x600a70, 7), cast_to=bytes)
-    nose.tools.assert_equal(str2, b'Int: 3\n')
+    unittest.TestCase().assertEqual(str2, b'Int: 3\n')
 
     str3 = state.solver.eval(state.memory.load(0x600ab0, 8), cast_to=bytes)
-    nose.tools.assert_equal(str3, b'Char: c\n')
+    unittest.TestCase().assertEqual(str3, b'Char: c\n')
 
     str4 = state.solver.eval(state.memory.load(0x600a50, 14), cast_to=bytes)
-    nose.tools.assert_equal(str4, b'Uninit int: 0\n')
+    unittest.TestCase().assertEqual(str4, b'Uninit int: 0\n')
 
     str5 = state.solver.eval(state.memory.load(0x600a90, 24), cast_to=bytes)
-    nose.tools.assert_equal(str5, b'Str on stack: A string.\n')
+    unittest.TestCase().assertEqual(str5, b'Str on stack: A string.\n')
 
     str6 = state.solver.eval(state.memory.load(0x600a30, 21), cast_to=bytes)
-    nose.tools.assert_equal(str6, b'Global str: GLOB_STR\n')
+    unittest.TestCase().assertEqual(str6, b'Global str: GLOB_STR\n')
 
 if __name__ == "__main__":
     test_sprintf()

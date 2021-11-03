@@ -1,6 +1,6 @@
 import os
 
-import nose
+import unittest
 
 from angr.project import Project
 
@@ -20,6 +20,6 @@ def test_cfg_manager_copies_cfg_graphs():
     original_graph = original_cfgs.cfgs['CFGFast'].graph
     new_graph = new_cfgs.cfgs['CFGFast'].graph
 
-    nose.tools.assert_equal(original_graph.edges(), new_graph.edges())
-    nose.tools.assert_equal(original_graph.nodes(), new_graph.nodes())
-    nose.tools.assert_false(original_graph is new_graph)
+    unittest.TestCase().assertEqual(original_graph.edges(), new_graph.edges())
+    unittest.TestCase().assertEqual(original_graph.nodes(), new_graph.nodes())
+    unittest.TestCase().assertFalse(original_graph is new_graph)

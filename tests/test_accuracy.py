@@ -1,5 +1,5 @@
-import nose
 import angr
+import unittest
 
 import os
 test_location = os.path.join(os.path.dirname(os.path.realpath(str(__file__))), '..', '..', 'binaries', 'tests')
@@ -33,7 +33,7 @@ def emulate(arch, binary, use_sim_procs, steps, hit_addrs, finished):
     else:
         raise ValueError("The result does not contain a state we can use for this test?")
 
-    nose.tools.assert_greater_equal(state.history.depth, steps)
+    unittest.TestCase().assertGreaterEqual(state.history.depth, steps)
 
     # this is some wonky control flow that asserts that the items in hit_addrs appear in the state in order.
     trace = state.history.bbl_addrs.hardcopy
@@ -41,14 +41,14 @@ def emulate(arch, binary, use_sim_procs, steps, hit_addrs, finished):
     while len(reqs) > 0:
         req = reqs.pop(0)
         while True:
-            nose.tools.assert_greater(len(trace), 0)
+            unittest.TestCase().assertGreater(len(trace), 0)
             trace_head = trace.pop(0)
             if trace_head == req:
                 break
-            nose.tools.assert_not_in(trace_head, reqs)
+            unittest.TestCase().assertNotIn(trace_head, reqs)
 
     if finished:
-        nose.tools.assert_true(is_finished)
+        unittest.TestCase().assertTrue(is_finished)
 
 def test_emulation():
     for arch in arch_data:
@@ -65,10 +65,10 @@ def test_locale():
     pg2 = pg.run(until=lambda lpg: len(lpg.active) != 1,
                   step_func=lambda lpg: lpg if len(lpg.active) == 1 else lpg.prune()
                  )
-    nose.tools.assert_equal(len(pg2.active), 0)
-    nose.tools.assert_equal(len(pg2.deadended), 1)
-    nose.tools.assert_equal(pg2.deadended[0].history.events[-1].type, 'terminate')
-    nose.tools.assert_equal(pg2.deadended[0].history.events[-1].objects['exit_code']._model_concrete.value, 0)
+    unittest.TestCase().assertEqual(len(pg2.active), 0)
+    unittest.TestCase().assertEqual(len(pg2.deadended), 1)
+    unittest.TestCase().assertEqual(pg2.deadended[0].history.events[-1].type, 'terminate')
+    unittest.TestCase().assertEqual(pg2.deadended[0].history.events[-1].objects['exit_code']._model_concrete.value, 0)
 
 
 if __name__ == '__main__':

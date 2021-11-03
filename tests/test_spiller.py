@@ -1,6 +1,6 @@
 import angr
 from angr.exploration_techniques.spiller import Spiller
-import nose
+import unittest
 import os
 import gc
 
@@ -25,8 +25,8 @@ def unpickle_callback(sid, state):  # pylint:disable=unused-argument
 def priority_key(state):
     return state.addr * state.history.depth # to help ensure determinism
 
-@nose.with_setup(setup, teardown)
 def test_basic():
+    setup()
     project = angr.Project(_bin('tests', 'cgc', 'sc2_0b32aa01_01'))
     state = project.factory.entry_state()
     spiller = Spiller(pickle_callback=pickle_callback, unpickle_callback=unpickle_callback)
@@ -39,8 +39,8 @@ def test_basic():
     assert state.globals['pickled']
     assert state.globals['unpickled']
 
-@nose.with_setup(setup, teardown)
 def test_palindrome2():
+    setup()
     project = angr.Project(_bin('tests', 'cgc', 'sc2_0b32aa01_01'))
     pg = project.factory.simulation_manager()
     limiter = angr.exploration_techniques.LengthLimiter(max_length=250)

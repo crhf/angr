@@ -1,5 +1,5 @@
 import angr
-import nose
+import unittest
 
 import os
 bin_location = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'binaries')
@@ -17,7 +17,7 @@ def test_comparison_identification():
         seen[addr] = symbol
 
     for addr, symbol in true_symbols.items():
-        nose.tools.assert_equal(true_symbols[addr], seen[addr])
+        unittest.TestCase().assertEqual(true_symbols[addr], seen[addr])
 
 def run_all():
     functions = globals()

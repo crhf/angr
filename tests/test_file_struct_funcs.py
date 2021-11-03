@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr
 
 import os
@@ -38,10 +38,10 @@ def test_file_struct_funcs():
     pg.active[0].options.discard("LAZY_SOLVES")
     pg.explore()
 
-    nose.tools.assert_equal(len(pg.deadended), 3)
+    unittest.TestCase().assertEqual(len(pg.deadended), 3)
 
     for p in pg.deadended:
-        nose.tools.assert_true(check_state_1(p) or check_state_2(p) or check_state_3(p))
+        unittest.TestCase().assertTrue(check_state_1(p) or check_state_2(p) or check_state_3(p))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr
 
 import os
@@ -15,10 +15,10 @@ def test_i386():
     simgr = p.factory.simulation_manager(s)
     simgr.explore(find=after_puts, avoid=else_paths, num_find=10)
 
-    nose.tools.assert_equal(len(simgr.avoid), 0)
-    nose.tools.assert_greater(len(simgr.found), 0)
+    unittest.TestCase().assertEqual(len(simgr.avoid), 0)
+    unittest.TestCase().assertGreater(len(simgr.found), 0)
     for f in simgr.found:
-        nose.tools.assert_in(b"ok", f.posix.dumps(1))
+        unittest.TestCase().assertIn(b"ok", f.posix.dumps(1))
 
 if __name__ == "__main__":
     import logging

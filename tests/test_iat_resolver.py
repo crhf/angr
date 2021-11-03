@@ -1,4 +1,4 @@
-import nose
+import unittest
 import os
 
 import angr
@@ -10,17 +10,17 @@ def test_iat():
     cfg = p.analyses.CFGFast()
 
     strcmp_caller_bb = cfg.get_any_node(0x401010)
-    nose.tools.assert_equal(len(strcmp_caller_bb.successors), 1)
+    unittest.TestCase().assertEqual(len(strcmp_caller_bb.successors), 1)
 
     strcmp = strcmp_caller_bb.successors[0]
-    nose.tools.assert_true(strcmp.is_simprocedure)
-    nose.tools.assert_equal(strcmp.simprocedure_name, 'strcmp')
+    unittest.TestCase().assertTrue(strcmp.is_simprocedure)
+    unittest.TestCase().assertEqual(strcmp.simprocedure_name, 'strcmp')
 
     strcmp_successors = strcmp.successors
-    nose.tools.assert_equal(len(strcmp_successors), 1)
+    unittest.TestCase().assertEqual(len(strcmp_successors), 1)
 
     strcmp_ret_to = strcmp_successors[0]
-    nose.tools.assert_equal(strcmp_ret_to.addr, 0x40102a)
+    unittest.TestCase().assertEqual(strcmp_ret_to.addr, 0x40102a)
 
 if __name__ == '__main__':
     test_iat()

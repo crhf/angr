@@ -1,4 +1,4 @@
-import nose
+import unittest
 import angr
 
 import logging
@@ -62,9 +62,9 @@ def run_fauxware_override(arch):
 
     results = p.factory.simulation_manager(thing=s).explore(find=target_addrs[arch], avoid=avoid_addrs[arch])
     stdin = results.found[0].posix.dumps(0)
-    nose.tools.assert_equal(b'SOSNEAKY', stdin)
+    unittest.TestCase().assertEqual(b'SOSNEAKY', stdin)
     stdout = results.found[0].posix.dumps(1)
-    nose.tools.assert_equal(b'HAHA\0', stdout)
+    unittest.TestCase().assertEqual(b'HAHA\0', stdout)
 
 def test_fauxware_override():
     #for arch in target_addrs:
